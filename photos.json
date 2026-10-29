@@ -5,13 +5,49 @@
       "name": "Door hangings",
       "photos": [
         {
-          "id": "shubh-labh-hangings",
-          "title": "Shubh labh hangings",
-          "thumb": "img/door-hangings/shubh-labh-hangings-t.jpg",
-          "large": "img/door-hangings/shubh-labh-hangings-l.jpg",
-          "w": 370,
-          "h": 660,
-          "frame": "#cbaeae"
+          "id": "pink-lotus-keychains",
+          "title": "Pink lotus keychains",
+          "thumb": "img/door-hangings/pink-lotus-keychains-t.jpg",
+          "large": "img/door-hangings/pink-lotus-keychains-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbbbae"
+        },
+        {
+          "id": "shubh-labh-hangings-maroon-and-green",
+          "title": "Shubh labh hangings maroon and green",
+          "thumb": "img/door-hangings/shubh-labh-hangings-maroon-and-green-t.jpg",
+          "large": "img/door-hangings/shubh-labh-hangings-maroon-and-green-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbc0ae"
+        },
+        {
+          "id": "shubh-labh-hangings-orange-and-blue",
+          "title": "Shubh labh hangings orange and blue",
+          "thumb": "img/door-hangings/shubh-labh-hangings-orange-and-blue-t.jpg",
+          "large": "img/door-hangings/shubh-labh-hangings-orange-and-blue-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbbdae"
+        },
+        {
+          "id": "shubh-labh-hangings-red-and-gold",
+          "title": "Shubh labh hangings red and gold",
+          "thumb": "img/door-hangings/shubh-labh-hangings-red-and-gold-t.jpg",
+          "large": "img/door-hangings/shubh-labh-hangings-red-and-gold-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbbeae"
+        },
+        {
+          "id": "white-lotus-keychains",
+          "title": "White lotus keychains",
+          "thumb": "img/door-hangings/white-lotus-keychains-t.jpg",
+          "large": "img/door-hangings/white-lotus-keychains-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbbaae"
         }
       ]
     },
@@ -144,144 +180,144 @@
           "title": "Black star mirror",
           "thumb": "img/wall-pieces/black-star-mirror-t.jpg",
           "large": "img/wall-pieces/black-star-mirror-l.jpg",
-          "w": 430,
-          "h": 450,
-          "frame": "#c3beb6"
+          "w": 600,
+          "h": 338,
+          "frame": "#cbbaae"
         },
         {
-          "id": "blue-mirror-mandala-plate",
-          "title": "Blue mirror mandala plate",
-          "thumb": "img/wall-pieces/blue-mirror-mandala-plate-t.jpg",
-          "large": "img/wall-pieces/blue-mirror-mandala-plate-l.jpg",
+          "id": "ganesha-arch-panel",
+          "title": "Ganesha arch panel",
+          "thumb": "img/wall-pieces/ganesha-arch-panel-t.jpg",
+          "large": "img/wall-pieces/ganesha-arch-panel-l.jpg",
           "w": 600,
           "h": 800,
-          "frame": "#c3beb6"
+          "frame": "#cbc4ae"
         },
         {
-          "id": "ganesha-mirror-plate",
-          "title": "Ganesha mirror plate",
-          "thumb": "img/wall-pieces/ganesha-mirror-plate-t.jpg",
-          "large": "img/wall-pieces/ganesha-mirror-plate-l.jpg",
-          "w": 540,
-          "h": 600,
-          "frame": "#423324"
+          "id": "ganesha-plate-with-mirror-border",
+          "title": "Ganesha plate with mirror border",
+          "thumb": "img/wall-pieces/ganesha-plate-with-mirror-border-t.jpg",
+          "large": "img/wall-pieces/ganesha-plate-with-mirror-border-l.jpg",
+          "w": 600,
+          "h": 1067,
+          "frame": "#cbbaae"
         },
         {
-          "id": "grid-dobvqx3j-6i",
-          "title": "Grid DObVqx3j 6I",
-          "thumb": "img/wall-pieces/grid-dobvqx3j-6i-t.jpg",
-          "large": "img/wall-pieces/grid-dobvqx3j-6i-l.jpg",
-          "w": 360,
-          "h": 640,
-          "frame": "#c3beb6"
+          "id": "golden-mirror-mosaic-plate",
+          "title": "Golden mirror mosaic plate",
+          "thumb": "img/wall-pieces/golden-mirror-mosaic-plate-t.jpg",
+          "large": "img/wall-pieces/golden-mirror-mosaic-plate-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbb6ae"
         },
         {
-          "id": "grid-doobkcjd2n2",
-          "title": "Grid DOObkcJD2n2",
-          "thumb": "img/wall-pieces/grid-doobkcjd2n2-t.jpg",
-          "large": "img/wall-pieces/grid-doobkcjd2n2-l.jpg",
-          "w": 360,
-          "h": 640,
-          "frame": "#c3beb6"
+          "id": "hanuman-gada-panel",
+          "title": "Hanuman gada panel",
+          "thumb": "img/wall-pieces/hanuman-gada-panel-t.jpg",
+          "large": "img/wall-pieces/hanuman-gada-panel-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbc0ae"
         },
         {
-          "id": "grid-dorbxwsd-mo",
-          "title": "Grid DORBXWsD mo",
-          "thumb": "img/wall-pieces/grid-dorbxwsd-mo-t.jpg",
-          "large": "img/wall-pieces/grid-dorbxwsd-mo-l.jpg",
-          "w": 360,
-          "h": 640,
-          "frame": "#37372f"
-        },
-        {
-          "id": "grid-dper0jgj2nb",
-          "title": "Grid DPeR0JGj2nB",
-          "thumb": "img/wall-pieces/grid-dper0jgj2nb-t.jpg",
-          "large": "img/wall-pieces/grid-dper0jgj2nb-l.jpg",
-          "w": 360,
-          "h": 640,
-          "frame": "#cbaeae"
-        },
-        {
-          "id": "grid-dpmrusfd5gk",
-          "title": "Grid DPMRUsfD5Gk",
-          "thumb": "img/wall-pieces/grid-dpmrusfd5gk-t.jpg",
-          "large": "img/wall-pieces/grid-dpmrusfd5gk-l.jpg",
-          "w": 360,
-          "h": 640,
+          "id": "jai-shri-ram-plate",
+          "title": "Jai shri ram plate",
+          "thumb": "img/wall-pieces/jai-shri-ram-plate-t.jpg",
+          "large": "img/wall-pieces/jai-shri-ram-plate-l.jpg",
+          "w": 600,
+          "h": 1067,
           "frame": "#cbbdae"
         },
         {
-          "id": "grid-dpraxood3ob",
-          "title": "Grid DPRaxoOD3ob",
-          "thumb": "img/wall-pieces/grid-dpraxood3ob-t.jpg",
-          "large": "img/wall-pieces/grid-dpraxood3ob-l.jpg",
-          "w": 360,
-          "h": 640,
-          "frame": "#b2c8c8"
+          "id": "krishna-crown-and-flute-plate",
+          "title": "Krishna crown and flute plate",
+          "thumb": "img/wall-pieces/krishna-crown-and-flute-plate-t.jpg",
+          "large": "img/wall-pieces/krishna-crown-and-flute-plate-l.jpg",
+          "w": 600,
+          "h": 1067,
+          "frame": "#cbb6ae"
         },
         {
-          "id": "mirror-pieces-on-easels",
-          "title": "Mirror pieces on easels",
-          "thumb": "img/wall-pieces/mirror-pieces-on-easels-t.jpg",
-          "large": "img/wall-pieces/mirror-pieces-on-easels-l.jpg",
+          "id": "krishna-flute-plate",
+          "title": "Krishna flute plate",
+          "thumb": "img/wall-pieces/krishna-flute-plate-t.jpg",
+          "large": "img/wall-pieces/krishna-flute-plate-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbbeae"
+        },
+        {
+          "id": "pink-petal-plate",
+          "title": "Pink petal plate",
+          "thumb": "img/wall-pieces/pink-petal-plate-t.jpg",
+          "large": "img/wall-pieces/pink-petal-plate-l.jpg",
+          "w": 600,
+          "h": 1067,
+          "frame": "#cbbaae"
+        },
+        {
+          "id": "red-and-green-mandala-mirror",
+          "title": "Red and green mandala mirror",
+          "thumb": "img/wall-pieces/red-and-green-mandala-mirror-t.jpg",
+          "large": "img/wall-pieces/red-and-green-mandala-mirror-l.jpg",
           "w": 600,
           "h": 338,
-          "frame": "#cbaeae"
+          "frame": "#cbbaae"
         },
         {
-          "id": "orange-cross-mirror",
-          "title": "Orange cross mirror",
-          "thumb": "img/wall-pieces/orange-cross-mirror-t.jpg",
-          "large": "img/wall-pieces/orange-cross-mirror-l.jpg",
+          "id": "red-and-yellow-square-mirror",
+          "title": "Red and yellow square mirror",
+          "thumb": "img/wall-pieces/red-and-yellow-square-mirror-t.jpg",
+          "large": "img/wall-pieces/red-and-yellow-square-mirror-l.jpg",
           "w": 600,
-          "h": 627,
-          "frame": "#42242b"
+          "h": 800,
+          "frame": "#cbbdae"
         },
         {
-          "id": "orange-mandala-plate",
-          "title": "Orange mandala plate",
-          "thumb": "img/wall-pieces/orange-mandala-plate-t.jpg",
-          "large": "img/wall-pieces/orange-mandala-plate-l.jpg",
+          "id": "red-green-and-black-swirl-mirror",
+          "title": "Red green and black swirl mirror",
+          "thumb": "img/wall-pieces/red-green-and-black-swirl-mirror-t.jpg",
+          "large": "img/wall-pieces/red-green-and-black-swirl-mirror-l.jpg",
           "w": 600,
-          "h": 1066,
-          "frame": "#c3beb6"
+          "h": 600,
+          "frame": "#cbbeae"
         },
         {
-          "id": "red-and-green-swirl-mirror",
-          "title": "Red and green swirl mirror",
-          "thumb": "img/wall-pieces/red-and-green-swirl-mirror-t.jpg",
-          "large": "img/wall-pieces/red-and-green-swirl-mirror-l.jpg",
-          "w": 420,
-          "h": 440,
-          "frame": "#38342e"
+          "id": "red-lotus-mandala",
+          "title": "Red lotus mandala",
+          "thumb": "img/wall-pieces/red-lotus-mandala-t.jpg",
+          "large": "img/wall-pieces/red-lotus-mandala-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#cbbdae"
         },
         {
-          "id": "red-butterfly-mirror",
-          "title": "Red butterfly mirror",
-          "thumb": "img/wall-pieces/red-butterfly-mirror-t.jpg",
-          "large": "img/wall-pieces/red-butterfly-mirror-l.jpg",
-          "w": 480,
-          "h": 530,
-          "frame": "#422424"
+          "id": "red-swirl-flower-mirror",
+          "title": "Red swirl flower mirror",
+          "thumb": "img/wall-pieces/red-swirl-flower-mirror-t.jpg",
+          "large": "img/wall-pieces/red-swirl-flower-mirror-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbbeae"
         },
         {
           "id": "shri-radha-plate",
           "title": "Shri radha plate",
           "thumb": "img/wall-pieces/shri-radha-plate-t.jpg",
           "large": "img/wall-pieces/shri-radha-plate-l.jpg",
-          "w": 590,
-          "h": 600,
-          "frame": "#38342e"
+          "w": 600,
+          "h": 1067,
+          "frame": "#cbb9ae"
         },
         {
-          "id": "square-mandala-panel",
-          "title": "Square mandala panel",
-          "thumb": "img/wall-pieces/square-mandala-panel-t.jpg",
-          "large": "img/wall-pieces/square-mandala-panel-l.jpg",
+          "id": "sunburst-dot-mirror",
+          "title": "Sunburst dot mirror",
+          "thumb": "img/wall-pieces/sunburst-dot-mirror-t.jpg",
+          "large": "img/wall-pieces/sunburst-dot-mirror-l.jpg",
           "w": 600,
-          "h": 800,
-          "frame": "#c3beb6"
+          "h": 1067,
+          "frame": "#cbbaae"
         }
       ]
     }
