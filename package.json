@@ -10,7 +10,11 @@
     "qr": "node scripts/qr.mjs"
   },
   "dependencies": {
+    "opentype.js": "^2.0.0",
     "qrcode": "^1.5.4",
     "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "jsqr": "^1.4.0"
   }
 }

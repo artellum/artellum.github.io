@@ -40,7 +40,9 @@ Preview never touches your real `img/` or `photos.json`.
 npm run qr -- https://pranjalagg.github.io/artellum-gallery/
 ```
 
-Writes `qr/artellum-qr.png` (and `.svg`): a square card with the QR code and the web address in plain text underneath, for people who would rather type it. Scan the printed card with a phone before the exhibition.
+Writes `qr/artellum-qr.png` (2400 × 3000, ready to print) and `qr/artellum-qr.svg`: the code hanging in a dark frame on a sage wall, with "Artellum" in its handwritten font and a small museum label underneath. The lettering is drawn from the font files in `fonts/` (Homemade Apple, Apache 2.0; Spectral, OFL), so the card prints the same anywhere. The label text lives in `museumLabel()` in `scripts/qr.mjs`.
+
+`npm test` checks that the card still scans back to the URL, including small and slightly blurred. Still scan the printed card with a phone before the exhibition.
 
 ## Publish on GitHub Pages
 
