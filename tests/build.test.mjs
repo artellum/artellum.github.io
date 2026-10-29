@@ -136,7 +136,8 @@ test("categories.json sets names and order; manifest carries titles and sizes", 
   await build(ws);
   const m = await manifest(ws.out);
   assert.deepEqual(m.categories.map((c) => [c.slug, c.name]), [["paintings", "Paintings"], ["crochet", "Crochet ✦"]]);
-  assert.deepEqual(m.categories[1].photos[0], {
+  const { frame, ...rest } = m.categories[1].photos[0];
+  assert.deepEqual(rest, {
     id: "red-doily",
     title: "Red doily",
     thumb: "img/crochet/red-doily-t.jpg",
@@ -144,5 +145,25 @@ test("categories.json sets names and order; manifest carries titles and sizes", 
     w: 600,
     h: 900,
   });
+  assert.match(frame, /^#[0-9a-f]{6}$/);
+  await rm(ws.root, { recursive: true });
+});
+
+test("frame colour follows the photo: light for a dark photo, dark for a bright one", async () => {
+  const ws = await workspace();
+  const solid = async (name, background) => {
+    await mkdir(path.join(ws.src, "paintings"), { recursive: true });
+    await sharp({ create: { width: 200, height: 200, channels: 3, background } }).jpeg().toFile(path.join(ws.src, "paintings", name));
+  };
+  await solid("night.jpg", "#0a2a30");
+  await solid("sand.jpg", "#e8d8a0");
+  await build(ws);
+  const lightness = (hex) => {
+    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+    return (Math.max(r, g, b) + Math.min(r, g, b)) / 2;
+  };
+  const byId = Object.fromEntries((await manifest(ws.out)).categories[0].photos.map((p) => [p.id, p.frame]));
+  assert.ok(lightness(byId.night) > 0.6, byId.night);
+  assert.ok(lightness(byId.sand) < 0.3, byId.sand);
   await rm(ws.root, { recursive: true });
 });

@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { frameColour } from "./frame.mjs";
 import { categoryLabel, orderCategories, slugify, titleFromFilename } from "./names.mjs";
 
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"]);
@@ -46,6 +47,13 @@ async function resizeBoth(file, largePath, thumbPath) {
   } finally {
     await cleanup();
   }
+}
+
+// Read from the thumbnail on every run, so frames stay correct for photos that were skipped as unchanged.
+async function frameFor(thumbPath) {
+  const { channels, dominant } = await sharp(thumbPath).stats();
+  const luminance = (0.2126 * channels[0].mean + 0.7152 * channels[1].mean + 0.0722 * channels[2].mean) / 255;
+  return frameColour({ dominant, luminance });
 }
 
 async function removeStale(imgDir, keep) {
@@ -109,6 +117,7 @@ export async function build({ src, out, categoriesFile }) {
           large: `img/${slug}/${id}-l.jpg`,
           w: width,
           h: height,
+          frame: await frameFor(thumbPath),
         });
       } catch (err) {
         report.warnings.push(`${dirEntry.name}/${entry.name}: ${err.message}`);

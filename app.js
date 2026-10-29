@@ -12,7 +12,9 @@ const itemsOf = (category) => category.photos.map((photo) => ({ slug: category.s
 const listFor = (view) => (view === "home" ? interleave(categories) : itemsOf(categories.find((c) => c.slug === view)));
 let under = "home"; // the view kept beneath an open photo: "home" or a category slug
 const TILTS = [-1.4, 1.1, -0.8, 1.5, -1.1];
-const FRAMES = ["frame-dark", "frame-dark", "frame-light", "frame-dark", "frame-light", "frame-dark", "frame-dark"];
+// Used for photos built before frame colours existed; `npm run build` picks one per photo.
+const FALLBACK_FRAMES = ["#3a2f28", "#3a2f28", "#c9c3b2", "#3a2f28", "#c9c3b2", "#3a2f28", "#3a2f28"];
+const frameOf = (photo, i) => photo.frame ?? FALLBACK_FRAMES[i % FALLBACK_FRAMES.length];
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 function el(tag, props = {}, ...children) {
@@ -22,6 +24,13 @@ function el(tag, props = {}, ...children) {
 }
 
 const message = (text) => el("p", { className: "message" }, text);
+
+function cover(category, i) {
+  const photo = category.photos[0];
+  const img = el("img", { className: "cat-cover", src: photo.thumb, alt: "", width: 96, height: 96, decoding: "async" });
+  img.style.setProperty("--frame", frameOf(photo, i));
+  return img;
+}
 
 function homeView() {
   document.title = SITE;
@@ -37,7 +46,7 @@ function homeView() {
           el(
             "a",
             { href: routeHref({ view: "category", slug: c.slug }) },
-            el("img", { className: "cat-cover", src: c.photos[0].thumb, alt: "", width: 96, height: 96, decoding: "async" }),
+            cover(c, i),
             el("span", { className: "cat-name" }, c.name),
             el("span", { className: "cat-count" }, String(c.photos.length)),
           ),
@@ -55,8 +64,9 @@ function wall(items) {
   const node = el("div", { className: "wall" });
   items.forEach(({ slug, photo }, i) => {
     const img = el("img", { src: photo.thumb, alt: photo.title, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
-    const piece = el("a", { className: `piece ${FRAMES[i % FRAMES.length]}`, href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
+    const piece = el("a", { className: "piece", href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
     piece.style.setProperty("--d", String(i % 4));
+    piece.style.setProperty("--frame", frameOf(photo, i));
     const reveal = () => piece.classList.add("in");
     img.addEventListener("load", reveal, { once: true });
     img.addEventListener("error", reveal, { once: true });
