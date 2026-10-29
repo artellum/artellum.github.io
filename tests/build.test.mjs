@@ -1,0 +1,148 @@
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { mkdtemp, mkdir, writeFile, rm, readFile, utimes } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import sharp from "sharp";
+import { build } from "../scripts/build.mjs";
+
+async function workspace() {
+  const root = await mkdtemp(path.join(tmpdir(), "gallery-"));
+  const src = path.join(root, "originals");
+  const out = path.join(root, "site");
+  await mkdir(src);
+  await mkdir(out);
+  return { root, src, out, categoriesFile: path.join(root, "categories.json") };
+}
+
+async function photo(file, w, h, opts = {}) {
+  await mkdir(path.dirname(file), { recursive: true });
+  let img = sharp({ create: { width: w, height: h, channels: 3, background: "#c98a6b" } });
+  if (opts.orientation) img = img.withMetadata({ orientation: opts.orientation });
+  await img.jpeg().toFile(file);
+}
+
+const meta = (file) => sharp(file).metadata();
+const manifest = async (out) => JSON.parse(await readFile(path.join(out, "photos.json"), "utf8"));
+
+test("resizes large to 1600 long edge and thumb to 600 wide, never enlarging", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "paintings", "big.jpg"), 3000, 2000);
+  await photo(path.join(ws.src, "paintings", "small.jpg"), 800, 600);
+  await build(ws);
+  const big = path.join(ws.out, "img/paintings");
+  assert.deepEqual([(await meta(`${big}/big-l.jpg`)).width, (await meta(`${big}/big-l.jpg`)).height], [1600, 1067]);
+  assert.deepEqual([(await meta(`${big}/big-t.jpg`)).width, (await meta(`${big}/big-t.jpg`)).height], [600, 400]);
+  assert.equal((await meta(`${big}/small-l.jpg`)).width, 800);
+  assert.equal((await meta(`${big}/small-l.jpg`)).height, 600);
+  await rm(ws.root, { recursive: true });
+});
+
+test("applies EXIF rotation", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "paintings", "tall.jpg"), 400, 200, { orientation: 6 });
+  await build(ws);
+  const large = await meta(path.join(ws.out, "img/paintings/tall-l.jpg"));
+  assert.deepEqual([large.width, large.height], [200, 400]);
+  const m = await manifest(ws.out);
+  assert.ok(m.categories[0].photos[0].w < m.categories[0].photos[0].h);
+  await rm(ws.root, { recursive: true });
+});
+
+test("ignores junk files and empty categories", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "paintings", "a.jpg"), 100, 100);
+  await writeFile(path.join(ws.src, "paintings", ".DS_Store"), "x");
+  await writeFile(path.join(ws.src, "paintings", "notes.txt"), "x");
+  await mkdir(path.join(ws.src, "empty"));
+  await writeFile(path.join(ws.src, ".DS_Store"), "x");
+  const report = await build(ws);
+  const m = await manifest(ws.out);
+  assert.deepEqual(m.categories.map((c) => [c.slug, c.photos.length]), [["paintings", 1]]);
+  assert.deepEqual(report.warnings, []);
+  await rm(ws.root, { recursive: true });
+});
+
+test("an unreadable photo is a warning naming the file, not a crash", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "paintings", "good.jpg"), 100, 100);
+  await writeFile(path.join(ws.src, "paintings", "bad.jpg"), "not an image");
+  const report = await build(ws);
+  assert.equal(report.warnings.length, 1);
+  assert.match(report.warnings[0], /bad\.jpg/);
+  const m = await manifest(ws.out);
+  assert.deepEqual(m.categories[0].photos.map((p) => p.id), ["good"]);
+  await rm(ws.root, { recursive: true });
+});
+
+test("converts heic on macOS", { skip: process.platform !== "darwin" && "heic conversion uses macOS sips" }, async () => {
+  const ws = await workspace();
+  const jpg = path.join(ws.root, "seed.jpg");
+  await photo(jpg, 300, 200);
+  await mkdir(path.join(ws.src, "paintings"));
+  execFileSync("sips", ["-s", "format", "heic", jpg, "--out", path.join(ws.src, "paintings", "phone.HEIC")], { stdio: "ignore" });
+  const report = await build(ws);
+  assert.deepEqual(report.warnings, []);
+  assert.ok(existsSync(path.join(ws.out, "img/paintings/phone-l.jpg")));
+  await rm(ws.root, { recursive: true });
+});
+
+test("second run skips unchanged; deleting an original removes its outputs", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "paintings", "a.jpg"), 200, 200);
+  await photo(path.join(ws.src, "paintings", "b.jpg"), 200, 200);
+  const first = await build(ws);
+  assert.equal(first.processed, 2);
+  const second = await build(ws);
+  assert.deepEqual([second.processed, second.skipped], [0, 2]);
+  await rm(path.join(ws.src, "paintings", "b.jpg"));
+  const third = await build(ws);
+  assert.equal(third.removed, 2);
+  assert.ok(!existsSync(path.join(ws.out, "img/paintings/b-t.jpg")));
+  assert.ok(!existsSync(path.join(ws.out, "img/paintings/b-l.jpg")));
+  assert.deepEqual((await manifest(ws.out)).categories[0].photos.map((p) => p.id), ["a"]);
+  await rm(ws.root, { recursive: true });
+});
+
+test("a newer original is reprocessed", async () => {
+  const ws = await workspace();
+  const file = path.join(ws.src, "paintings", "a.jpg");
+  await photo(file, 200, 200);
+  await build(ws);
+  const future = new Date(Date.now() + 60_000);
+  await utimes(file, future, future);
+  const again = await build(ws);
+  assert.equal(again.processed, 1);
+  await rm(ws.root, { recursive: true });
+});
+
+test("slug collisions get a numeric suffix", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "paintings", "My Photo.jpg"), 100, 100);
+  await sharp({ create: { width: 100, height: 100, channels: 3, background: "#fff" } }).png().toFile(path.join(ws.src, "paintings", "my-photo.png"));
+  await build(ws);
+  const ids = (await manifest(ws.out)).categories[0].photos.map((p) => p.id).sort();
+  assert.deepEqual(ids, ["my-photo", "my-photo-2"]);
+  await rm(ws.root, { recursive: true });
+});
+
+test("categories.json sets names and order; manifest carries titles and sizes", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "crochet", "red-doily.jpg"), 600, 900);
+  await photo(path.join(ws.src, "paintings", "x.jpg"), 100, 100);
+  await writeFile(ws.categoriesFile, JSON.stringify({ order: ["paintings"], names: { crochet: "Crochet ✦" } }));
+  await build(ws);
+  const m = await manifest(ws.out);
+  assert.deepEqual(m.categories.map((c) => [c.slug, c.name]), [["paintings", "Paintings"], ["crochet", "Crochet ✦"]]);
+  assert.deepEqual(m.categories[1].photos[0], {
+    id: "red-doily",
+    title: "Red doily",
+    thumb: "img/crochet/red-doily-t.jpg",
+    large: "img/crochet/red-doily-l.jpg",
+    w: 600,
+    h: 900,
+  });
+  await rm(ws.root, { recursive: true });
+});

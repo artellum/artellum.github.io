@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "build": "node scripts/build.mjs"
   },
   "dependencies": {
     "qrcode": "^1.5.4",
