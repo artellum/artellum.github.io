@@ -10,6 +10,8 @@ let lightbox = null;
 let current = null;
 let under = "home"; // the view kept beneath an open photo: "home" or a category slug
 const TILTS = [-1.4, 1.1, -0.8, 1.5, -1.1];
+const FRAMES = ["frame-dark", "frame-dark", "frame-light", "frame-dark", "frame-light", "frame-dark", "frame-dark"];
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 function el(tag, props = {}, ...children) {
   const node = Object.assign(document.createElement(tag), props);
@@ -26,8 +28,8 @@ function homeView() {
     el(
       "ul",
       { className: "categories" },
-      ...categories.map((c) =>
-        el(
+      ...categories.map((c, i) => {
+        const li = el(
           "li",
           {},
           el(
@@ -36,8 +38,10 @@ function homeView() {
             el("span", { className: "cat-name" }, c.name),
             el("span", { className: "cat-count" }, String(c.photos.length)),
           ),
-        ),
-      ),
+        );
+        li.style.setProperty("--i", String(i));
+        return li;
+      }),
     ),
     el("h2", { className: "all-title" }, "all pieces"),
     wall(interleave(categories)),
@@ -46,13 +50,15 @@ function homeView() {
 
 function wall(items) {
   const node = el("div", { className: "wall" });
-  for (const { slug, photo } of items) {
+  items.forEach(({ slug, photo }, i) => {
     const img = el("img", { src: photo.thumb, alt: photo.title, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
-    const reveal = () => img.classList.add("in");
+    const piece = el("a", { className: `piece ${FRAMES[i % FRAMES.length]}`, href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
+    piece.style.setProperty("--d", String(i % 4));
+    const reveal = () => piece.classList.add("in");
     img.addEventListener("load", reveal, { once: true });
     img.addEventListener("error", reveal, { once: true });
-    node.append(el("a", { href: routeHref({ view: "photo", slug, id: photo.id }) }, img));
-  }
+    node.append(piece);
+  });
   return node;
 }
 
@@ -177,8 +183,14 @@ function render() {
   const key = route.view === "photo" ? under : route.view === "home" ? "home" : route.slug;
   if (key !== shown) {
     const beneath = categories.find((c) => c.slug === key);
-    app.replaceChildren(...(beneath ? wallView(beneath) : homeView()));
-    window.scrollTo(0, 0);
+    const nodes = beneath ? wallView(beneath) : homeView();
+    const swap = () => {
+      app.replaceChildren(...nodes);
+      window.scrollTo(0, 0);
+    };
+    const fade = prevView !== null && prevView !== "photo" && route.view !== "photo" && document.startViewTransition && !reducedMotion.matches;
+    if (fade) document.startViewTransition(swap);
+    else swap();
     shown = key;
   }
   if (route.view === "photo") {

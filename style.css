@@ -3,7 +3,10 @@
   --wall-quiet: #e9e8e2;
   --ink: #2c2a25;
   --ink-soft: #4a473f;
-  --rule: #a9ab9f;
+  --rule: rgb(44 42 37 / 0.28);
+  --frame-light: #f4f1ea;
+  --frame-light-edge: #b9b2a3;
+  --shadow-hung: 0 12px 18px -8px rgb(0 0 0 / 0.4), 0 2px 3px rgb(0 0 0 / 0.12);
   --frame-dark: #3a2f28;
 
   --font-ui: "Karla", system-ui, sans-serif;
@@ -19,9 +22,14 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background: var(--wall-quiet);
+  background: radial-gradient(ellipse 90% 520px at 50% -80px, rgb(255 255 255 / 0.45), transparent) no-repeat, var(--wall);
   color: var(--ink);
   font: 400 16px/1.6 var(--font-ui);
+}
+/* faint paper grain over the whole wall */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.3; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .17 0 0 0 0 .16 0 0 0 0 .14 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -54,21 +62,41 @@ a { color: inherit; }
 .back:hover { color: var(--ink); }
 .cat-title { margin: 0; text-transform: lowercase; font: 400 clamp(34px, 10vw, 56px)/1.1 var(--font-title); letter-spacing: -0.01em; }
 .cat-meta { margin: 4px 0 24px; font-size: 14px; color: var(--ink-soft); }
-.wall { columns: 2; column-gap: 10px; }
-@media (min-width: 760px) { .wall { columns: 3; column-gap: 14px; } }
+/* hung frames */
+.wall { columns: 2; column-gap: 16px; padding-top: 6px; }
+@media (min-width: 760px) { .wall { columns: 3; column-gap: 24px; } }
 @media (min-width: 1180px) { .wall { columns: 4; } }
-.wall a { display: block; margin: 0 0 10px; break-inside: avoid; background: var(--wall); }
-@media (min-width: 760px) { .wall a { margin-bottom: 14px; } }
-.wall img { display: block; width: 100%; height: auto; opacity: 0; transition: opacity 0.4s var(--ease); }
-.wall img.in { opacity: 1; }
-@media (prefers-reduced-motion: reduce) { .wall img { transition: none; } .categories a { transition: none; } }
+.piece {
+  display: block; margin: 0 0 18px; break-inside: avoid; background: var(--frame-light);
+  border: 7px solid var(--frame-edge, var(--frame-dark)); box-shadow: var(--shadow-hung);
+  transform-origin: 50% 0; transition: transform 0.5s var(--ease);
+  opacity: 0;
+}
+@media (min-width: 760px) { .piece { margin-bottom: 26px; } }
+.piece.frame-light { --frame-edge: var(--frame-light); outline: 1px solid var(--frame-light-edge); }
+.piece.in { opacity: 1; animation: settle 0.7s var(--ease) backwards; animation-delay: calc(var(--d, 0) * 70ms); }
+.piece img { display: block; width: 100%; height: auto; }
+/* Guarded so iOS does not treat the first tap as a hover and swallow it. */
+@media (hover: hover) { .piece:hover { transform: rotate(0.6deg); } }
+.piece:focus-visible { transform: rotate(0.6deg); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes settle { from { opacity: 0; transform: translateY(14px); } }
+.intro, .categories li { animation: rise 0.7s var(--ease) backwards; }
+.intro { animation-delay: 0.05s; }
+.categories li { animation-delay: calc(0.12s + var(--i, 0) * 80ms); }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.3s; }
+@media (prefers-reduced-motion: reduce) {
+  .piece, .piece.in, .intro, .categories li, .categories a { animation: none !important; transition: none !important; }
+  .piece { opacity: 1; }
+}
 
 /* lightbox: a tilted photo mat over the blurred wall */
 [hidden] { display: none !important; }
 html.lb-open { overflow: hidden; }
 .lightbox {
   position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; overscroll-behavior: contain;
-  background: rgb(233 232 226 / 0.55);
+  background: rgb(199 203 191 / 0.55);
   -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
   animation: fade 0.25s var(--ease);
 }
