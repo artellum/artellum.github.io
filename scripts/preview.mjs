@@ -7,7 +7,7 @@ import { build } from "./build.mjs";
 
 const DIR = path.resolve(".preview");
 const PORT = Number(process.env.PORT) || 4173;
-const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json", ".jpg": "image/jpeg" };
+const TYPES = { ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "text/javascript", ".json": "application/json", ".jpg": "image/jpeg", ".svg": "image/svg+xml" };
 
 if (!existsSync(".samples/originals")) {
   console.error("No sample photos yet. Run: npm run samples");
@@ -15,7 +15,7 @@ if (!existsSync(".samples/originals")) {
 }
 const report = await build({ src: ".samples/originals", out: DIR, categoriesFile: "categories.json" });
 for (const w of report.warnings) console.warn(`Skipped ${w}`);
-for (const page of ["index.html", "style.css", "app.js", "route.js"]) {
+for (const page of ["index.html", "style.css", "app.js", "route.js", "favicon.svg"]) {
   if (existsSync(page)) await copyFile(page, path.join(DIR, page));
 }
 
