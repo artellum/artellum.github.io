@@ -1,5 +1,5 @@
 // Printable QR card: npm run qr -- <url>  ->  qr/artellum-qr.svg and qr/artellum-qr.png
-// The code hangs in a dark frame on a sage wall, with a small museum label beneath it.
+// The code hangs in a dark frame on a sage wall, with a few italic lines beneath it.
 // All lettering is converted to outlines from the font files in fonts/, so the card
 // prints the same anywhere, with or without the fonts installed.
 import { readFileSync } from "node:fs";
@@ -12,19 +12,16 @@ const W = 1200;
 const H = 1500;
 const INK = "#3a2f28";
 const PAPER = "#ece7db";
-const LABEL_INK = "#5a534a";
+const SOFT_INK = "#6a6358";
 const FRAME = { x: 240, y: 270, w: 720, h: 820, border: 36 };
 const CODE = { x: 340, y: 370, size: 520 };
-const LABEL = { top: 1180, pad: 30, height: 190 };
 
 function loadFont(file) {
   const buf = readFileSync(new URL(`../fonts/${file}`, import.meta.url));
   return opentype.parse(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
 }
 const SIGN = loadFont("HomemadeApple-Regular.ttf");
-const SERIF = loadFont("Spectral-Regular.ttf");
 const SERIF_ITALIC = loadFont("Spectral-Italic.ttf");
-const SERIF_BOLD = loadFont("Spectral-SemiBold.ttf");
 
 // Written out by hand: opentype.js 2.0.0's toPathData emits NaN at some positions.
 const fmt = (v) => v.toFixed(2);
@@ -67,16 +64,14 @@ function codeModules(url) {
   return `<g fill="${INK}" shape-rendering="crispEdges">${out.join("")}</g>`;
 }
 
-function museumLabel() {
+// Centred italic lines straight on the wall: one larger line, then two quieter ones.
+function caption() {
   const lines = [
-    [SERIF_BOLD, "The rest of the collection", 30, 60, INK],
-    [SERIF_ITALIC, "paint, mirror, clay and thread", 25, 105, LABEL_INK],
-    [SERIF, "scan to step inside", 23, 155, LABEL_INK],
+    ["The rest of the collection", 50, 1235, INK],
+    ["paint, mirror, clay and thread", 38, 1305, SOFT_INK],
+    ["scan to step inside", 38, 1360, SOFT_INK],
   ];
-  const width = Math.max(...lines.map(([font, text, size]) => font.getAdvanceWidth(text, size))) + LABEL.pad * 2;
-  const x = (W - width) / 2;
-  return `<g filter="url(#hang)"><rect x="${x.toFixed(1)}" y="${LABEL.top}" width="${width.toFixed(1)}" height="${LABEL.height}" fill="#f1ede3"/></g>
-${lines.map(([font, text, size, dy, fill]) => lettering(font, text, size, x + LABEL.pad, LABEL.top + dy, fill)).join("\n")}`;
+  return lines.map(([text, size, baseline, fill]) => lettering(SERIF_ITALIC, text, size, W / 2, baseline, fill, "middle")).join("\n");
 }
 
 export function qrCardSvg(url) {
@@ -94,7 +89,7 @@ export function qrCardSvg(url) {
 <rect x="${mat.x}" y="${mat.y}" width="${mat.w}" height="${mat.h}" fill="${PAPER}"/>
 ${codeModules(url)}
 ${lettering(SIGN, "Artellum", 56, W / 2, 990, INK, "middle")}
-${museumLabel()}
+${caption()}
 </svg>
 `;
 }

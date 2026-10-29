@@ -38,3 +38,7 @@ test("lettering outlines contain only real numbers", () => {
   // opentype.js 2.0.0's toPathData emits NaN at some positions, which cuts letters off.
   assert.ok(!svg.includes("NaN"));
 });
+
+test("the lines under the frame sit on the wall, with no label card", () => {
+  assert.equal((svg.match(/filter="url\(#hang\)"/g) ?? []).length, 1, "only the frame casts a shadow");
+});
