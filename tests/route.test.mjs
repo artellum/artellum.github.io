@@ -40,3 +40,21 @@ test("neighbours finds previous and next without wrapping", () => {
 test("neighbours returns null for an unknown id", () => {
   assert.equal(neighbours([{ id: "a" }], "zzz"), null);
 });
+
+import { interleave } from "../route.js";
+
+test("interleave takes one photo from each category in turn", () => {
+  const categories = [
+    { slug: "a", photos: [{ id: "a1" }, { id: "a2" }, { id: "a3" }] },
+    { slug: "b", photos: [{ id: "b1" }] },
+    { slug: "c", photos: [{ id: "c1" }, { id: "c2" }] },
+  ];
+  assert.deepEqual(
+    interleave(categories).map((item) => `${item.slug}/${item.photo.id}`),
+    ["a/a1", "b/b1", "c/c1", "a/a2", "c/c2", "a/a3"],
+  );
+});
+
+test("interleave of no categories is empty", () => {
+  assert.deepEqual(interleave([]), []);
+});

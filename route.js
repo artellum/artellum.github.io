@@ -17,3 +17,15 @@ export function neighbours(photos, id) {
   if (index === -1) return null;
   return { index, prev: photos[index - 1] ?? null, next: photos[index + 1] ?? null };
 }
+
+// One photo from each category in turn, so a mixed wall does not start with 100 of the same thing.
+export function interleave(categories) {
+  const items = [];
+  const longest = Math.max(0, ...categories.map((c) => c.photos.length));
+  for (let i = 0; i < longest; i++) {
+    for (const c of categories) {
+      if (c.photos[i]) items.push({ slug: c.slug, photo: c.photos[i] });
+    }
+  }
+  return items;
+}

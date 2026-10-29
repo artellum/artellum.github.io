@@ -1,4 +1,4 @@
-import { neighbours, parseRoute, routeHref } from "./route.js";
+import { interleave, neighbours, parseRoute, routeHref } from "./route.js";
 
 const app = document.getElementById("app");
 const SITE = "Artellum handcraft";
@@ -8,6 +8,8 @@ let prevView = null;
 let openedFromWall = false;
 let lightbox = null;
 let current = null;
+let under = "home"; // the view kept beneath an open photo: "home" or a category slug
+const TILTS = [-1.4, 1.1, -0.8, 1.5, -1.1];
 
 function el(tag, props = {}, ...children) {
   const node = Object.assign(document.createElement(tag), props);
@@ -37,25 +39,31 @@ function homeView() {
         ),
       ),
     ),
+    el("h2", { className: "all-title" }, "All pieces"),
+    wall(interleave(categories)),
   ];
+}
+
+function wall(items) {
+  const node = el("div", { className: "wall" });
+  for (const { slug, photo } of items) {
+    const img = el("img", { src: photo.thumb, alt: photo.title, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
+    const reveal = () => img.classList.add("in");
+    img.addEventListener("load", reveal, { once: true });
+    img.addEventListener("error", reveal, { once: true });
+    node.append(el("a", { href: routeHref({ view: "photo", slug, id: photo.id }) }, img));
+  }
+  return node;
 }
 
 function wallView(category) {
   document.title = `${category.name} · ${SITE}`;
-  const wall = el("div", { className: "wall" });
-  for (const p of category.photos) {
-    const img = el("img", { src: p.thumb, alt: p.title, width: p.w, height: p.h, loading: "lazy", decoding: "async" });
-    const reveal = () => img.classList.add("in");
-    img.addEventListener("load", reveal, { once: true });
-    img.addEventListener("error", reveal, { once: true });
-    wall.append(el("a", { href: routeHref({ view: "photo", slug: category.slug, id: p.id }) }, img));
-  }
   const count = category.photos.length;
   return [
     el("a", { className: "back", href: "#/" }, "← All pieces"),
     el("h1", { className: "cat-title" }, category.name),
     el("p", { className: "cat-meta" }, `${count} ${count === 1 ? "piece" : "pieces"}`),
-    wall,
+    wall(category.photos.map((photo) => ({ slug: category.slug, photo }))),
   ];
 }
 
@@ -84,7 +92,7 @@ function buildLightbox() {
 function closeLightbox() {
   if (!current) return;
   if (openedFromWall) history.back();
-  else location.replace(routeHref({ view: "category", slug: current.category.slug }));
+  else location.replace(under === "home" ? routeHref({ view: "home" }) : routeHref({ view: "category", slug: under }));
 }
 
 function goTo(photo) {
@@ -98,7 +106,7 @@ function wireLightbox(lb) {
   lb.prev.addEventListener("click", () => goTo(current?.nb.prev));
   lb.next.addEventListener("click", () => goTo(current?.nb.next));
   lb.root.addEventListener("click", (e) => {
-    if (e.target === lb.root || e.target.tagName === "FIGURE") closeLightbox();
+    if (e.target === lb.root) closeLightbox();
   });
   addEventListener("keydown", (e) => {
     if (!current) return;
@@ -131,6 +139,13 @@ function showPhoto(category, id) {
   // The thumbnail is already cached from the wall; swap in the large file once it arrives.
   lightbox.img.src = photo.thumb;
   lightbox.img.alt = photo.title;
+  // Size from the known ratio so the thumbnail and the large file fill the same frame.
+  lightbox.img.style.setProperty("--ratio", String(photo.w / photo.h));
+  const frame = lightbox.root.querySelector("figure");
+  frame.style.setProperty("--tilt", `${TILTS[nb.index % TILTS.length]}deg`);
+  frame.style.animation = "none";
+  void frame.offsetWidth;
+  frame.style.animation = "";
   const large = new Image();
   large.onload = () => { if (current?.category === category && current.nb.index === nb.index) lightbox.img.src = photo.large; };
   large.src = photo.large;
@@ -155,14 +170,18 @@ function render() {
     route = { view: "category", slug: route.slug };
     history.replaceState(null, "", routeHref(route));
   }
-  const key = route.view === "home" ? "home" : route.slug;
+  if (route.view === "photo" && prevView !== "photo") {
+    openedFromWall = prevView !== null;
+    under = prevView === null ? route.slug : shown;
+  }
+  const key = route.view === "photo" ? under : route.view === "home" ? "home" : route.slug;
   if (key !== shown) {
-    app.replaceChildren(...(category ? wallView(category) : homeView()));
+    const beneath = categories.find((c) => c.slug === key);
+    app.replaceChildren(...(beneath ? wallView(beneath) : homeView()));
     window.scrollTo(0, 0);
     shown = key;
   }
   if (route.view === "photo") {
-    if (prevView !== "photo") openedFromWall = prevView !== null;
     showPhoto(category, route.id);
   } else {
     hideLightbox();
