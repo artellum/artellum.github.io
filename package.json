@@ -7,7 +7,8 @@
     "build": "node scripts/build.mjs",
     "samples": "node scripts/samples.mjs",
     "preview": "node scripts/preview.mjs",
-    "qr": "node scripts/qr.mjs"
+    "qr": "node scripts/qr.mjs",
+    "release": "npm test && git fetch origin && git push prod origin/main:main"
   },
   "dependencies": {
     "opentype.js": "^2.0.0",

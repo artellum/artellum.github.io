@@ -4,7 +4,7 @@ import sharp from "sharp";
 import jsQR from "jsqr";
 import { qrCardSvg } from "../scripts/qr.mjs";
 
-const url = "https://pranjalagg.github.io/artellum-gallery/";
+const url = "https://artellum.github.io/";
 const svg = qrCardSvg(url);
 
 test("card is a 1200 by 1500 svg", () => {
@@ -18,7 +18,7 @@ test("no web address is printed on the card", () => {
 
 test("all lettering is drawn as outlines, so it prints without the fonts installed", () => {
   assert.ok(!svg.includes("<text"));
-  assert.ok((svg.match(/<path /g) ?? []).length >= 4, "wordmark and three label lines");
+  assert.ok((svg.match(/<path /g) ?? []).length >= 2, "wordmark and caption");
 });
 
 test("card has a readable title for screen readers", () => {
