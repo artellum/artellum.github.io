@@ -1,0 +1,6 @@
+node_modules/
+originals/
+.samples/
+.preview/
+.DS_Store
+.superpowers/
