@@ -27,3 +27,16 @@ test("routeHref is the inverse of parseRoute", () => {
     assert.equal(routeHref(parseRoute(hash, slugs)), hash);
   }
 });
+
+import { neighbours } from "../route.js";
+
+test("neighbours finds previous and next without wrapping", () => {
+  const photos = [{ id: "a" }, { id: "b" }, { id: "c" }];
+  assert.deepEqual(neighbours(photos, "b"), { index: 1, prev: photos[0], next: photos[2] });
+  assert.deepEqual(neighbours(photos, "a"), { index: 0, prev: null, next: photos[1] });
+  assert.deepEqual(neighbours(photos, "c"), { index: 2, prev: photos[1], next: null });
+});
+
+test("neighbours returns null for an unknown id", () => {
+  assert.equal(neighbours([{ id: "a" }], "zzz"), null);
+});

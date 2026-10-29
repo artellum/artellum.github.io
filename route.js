@@ -11,3 +11,9 @@ export function routeHref(route) {
   if (route.view === "category") return `#/${encodeURIComponent(route.slug)}`;
   return `#/${encodeURIComponent(route.slug)}/${encodeURIComponent(route.id)}`;
 }
+
+export function neighbours(photos, id) {
+  const index = photos.findIndex((p) => p.id === id);
+  if (index === -1) return null;
+  return { index, prev: photos[index - 1] ?? null, next: photos[index + 1] ?? null };
+}
