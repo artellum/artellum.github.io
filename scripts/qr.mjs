@@ -67,9 +67,9 @@ function codeModules(url) {
 // Centred italic lines straight on the wall: one larger line, then two quieter ones.
 function caption() {
   const lines = [
-    ["The rest of the collection", 50, 1235, INK],
-    ["paint, mirror, clay and thread", 38, 1305, SOFT_INK],
-    ["scan to step inside", 38, 1360, SOFT_INK],
+    ["scan to see the rest of the collection", 50, 1235, INK],
+    // ["paint, mirror, clay and thread", 38, 1305, SOFT_INK],
+    // ["scan to step inside", 38, 1360, SOFT_INK],
   ];
   return lines.map(([text, size, baseline, fill]) => lettering(SERIF_ITALIC, text, size, W / 2, baseline, fill, "middle")).join("\n");
 }

@@ -1,6 +1,21 @@
 {
   "categories": [
     {
+      "slug": "door-hangings",
+      "name": "Door hangings",
+      "photos": [
+        {
+          "id": "shubh-labh-hangings",
+          "title": "Shubh labh hangings",
+          "thumb": "img/door-hangings/shubh-labh-hangings-t.jpg",
+          "large": "img/door-hangings/shubh-labh-hangings-l.jpg",
+          "w": 370,
+          "h": 660,
+          "frame": "#cbaeae"
+        }
+      ]
+    },
+    {
       "slug": "keychains",
       "name": "Keychains",
       "photos": [
@@ -11,6 +26,24 @@
           "large": "img/keychains/grid-dn54-fadybk-l.jpg",
           "w": 360,
           "h": 640,
+          "frame": "#c3beb6"
+        },
+        {
+          "id": "lotus-keychains-red-and-gold",
+          "title": "Lotus keychains red and gold",
+          "thumb": "img/keychains/lotus-keychains-red-and-gold-t.jpg",
+          "large": "img/keychains/lotus-keychains-red-and-gold-l.jpg",
+          "w": 600,
+          "h": 1066,
+          "frame": "#c3beb6"
+        },
+        {
+          "id": "lotus-keychains-with-pearl-tassels",
+          "title": "Lotus keychains with pearl tassels",
+          "thumb": "img/keychains/lotus-keychains-with-pearl-tassels-t.jpg",
+          "large": "img/keychains/lotus-keychains-with-pearl-tassels-l.jpg",
+          "w": 600,
+          "h": 1067,
           "frame": "#c3beb6"
         },
         {
@@ -28,6 +61,15 @@
       "slug": "tea-lights",
       "name": "Tea lights",
       "photos": [
+        {
+          "id": "bright-dotted-tea-lights",
+          "title": "Bright dotted tea lights",
+          "thumb": "img/tea-lights/bright-dotted-tea-lights-t.jpg",
+          "large": "img/tea-lights/bright-dotted-tea-lights-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbaeae"
+        },
         {
           "id": "grid-dogwohvj-if",
           "title": "Grid DOGwOhvj If",
@@ -47,6 +89,33 @@
           "frame": "#38342e"
         },
         {
+          "id": "jewel-tone-flower-tea-lights",
+          "title": "Jewel tone flower tea lights",
+          "thumb": "img/tea-lights/jewel-tone-flower-tea-lights-t.jpg",
+          "large": "img/tea-lights/jewel-tone-flower-tea-lights-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbaeae"
+        },
+        {
+          "id": "mirror-ring-tea-lights",
+          "title": "Mirror ring tea lights",
+          "thumb": "img/tea-lights/mirror-ring-tea-lights-t.jpg",
+          "large": "img/tea-lights/mirror-ring-tea-lights-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbaeae"
+        },
+        {
+          "id": "pastel-flower-tea-lights",
+          "title": "Pastel flower tea lights",
+          "thumb": "img/tea-lights/pastel-flower-tea-lights-t.jpg",
+          "large": "img/tea-lights/pastel-flower-tea-lights-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbaeae"
+        },
+        {
           "id": "photo-dowwhmxj66k",
           "title": "Photo DOWWHmXj66K",
           "thumb": "img/tea-lights/photo-dowwhmxj66k-t.jpg",
@@ -54,6 +123,15 @@
           "w": 600,
           "h": 600,
           "frame": "#c3beb6"
+        },
+        {
+          "id": "scalloped-tea-lights-with-gold-vines",
+          "title": "Scalloped tea lights with gold vines",
+          "thumb": "img/tea-lights/scalloped-tea-lights-with-gold-vines-t.jpg",
+          "large": "img/tea-lights/scalloped-tea-lights-with-gold-vines-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbaeae"
         }
       ]
     },
@@ -61,6 +139,33 @@
       "slug": "wall-pieces",
       "name": "Wall pieces",
       "photos": [
+        {
+          "id": "black-star-mirror",
+          "title": "Black star mirror",
+          "thumb": "img/wall-pieces/black-star-mirror-t.jpg",
+          "large": "img/wall-pieces/black-star-mirror-l.jpg",
+          "w": 430,
+          "h": 450,
+          "frame": "#c3beb6"
+        },
+        {
+          "id": "blue-mirror-mandala-plate",
+          "title": "Blue mirror mandala plate",
+          "thumb": "img/wall-pieces/blue-mirror-mandala-plate-t.jpg",
+          "large": "img/wall-pieces/blue-mirror-mandala-plate-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#c3beb6"
+        },
+        {
+          "id": "ganesha-mirror-plate",
+          "title": "Ganesha mirror plate",
+          "thumb": "img/wall-pieces/ganesha-mirror-plate-t.jpg",
+          "large": "img/wall-pieces/ganesha-mirror-plate-l.jpg",
+          "w": 540,
+          "h": 600,
+          "frame": "#423324"
+        },
         {
           "id": "grid-dobvqx3j-6i",
           "title": "Grid DObVqx3j 6I",
@@ -114,6 +219,69 @@
           "w": 360,
           "h": 640,
           "frame": "#b2c8c8"
+        },
+        {
+          "id": "mirror-pieces-on-easels",
+          "title": "Mirror pieces on easels",
+          "thumb": "img/wall-pieces/mirror-pieces-on-easels-t.jpg",
+          "large": "img/wall-pieces/mirror-pieces-on-easels-l.jpg",
+          "w": 600,
+          "h": 338,
+          "frame": "#cbaeae"
+        },
+        {
+          "id": "orange-cross-mirror",
+          "title": "Orange cross mirror",
+          "thumb": "img/wall-pieces/orange-cross-mirror-t.jpg",
+          "large": "img/wall-pieces/orange-cross-mirror-l.jpg",
+          "w": 600,
+          "h": 627,
+          "frame": "#42242b"
+        },
+        {
+          "id": "orange-mandala-plate",
+          "title": "Orange mandala plate",
+          "thumb": "img/wall-pieces/orange-mandala-plate-t.jpg",
+          "large": "img/wall-pieces/orange-mandala-plate-l.jpg",
+          "w": 600,
+          "h": 1066,
+          "frame": "#c3beb6"
+        },
+        {
+          "id": "red-and-green-swirl-mirror",
+          "title": "Red and green swirl mirror",
+          "thumb": "img/wall-pieces/red-and-green-swirl-mirror-t.jpg",
+          "large": "img/wall-pieces/red-and-green-swirl-mirror-l.jpg",
+          "w": 420,
+          "h": 440,
+          "frame": "#38342e"
+        },
+        {
+          "id": "red-butterfly-mirror",
+          "title": "Red butterfly mirror",
+          "thumb": "img/wall-pieces/red-butterfly-mirror-t.jpg",
+          "large": "img/wall-pieces/red-butterfly-mirror-l.jpg",
+          "w": 480,
+          "h": 530,
+          "frame": "#422424"
+        },
+        {
+          "id": "shri-radha-plate",
+          "title": "Shri radha plate",
+          "thumb": "img/wall-pieces/shri-radha-plate-t.jpg",
+          "large": "img/wall-pieces/shri-radha-plate-l.jpg",
+          "w": 590,
+          "h": 600,
+          "frame": "#38342e"
+        },
+        {
+          "id": "square-mandala-panel",
+          "title": "Square mandala panel",
+          "thumb": "img/wall-pieces/square-mandala-panel-t.jpg",
+          "large": "img/wall-pieces/square-mandala-panel-l.jpg",
+          "w": 600,
+          "h": 800,
+          "frame": "#c3beb6"
         }
       ]
     }
