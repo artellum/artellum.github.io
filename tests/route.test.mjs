@@ -30,15 +30,23 @@ test("routeHref is the inverse of parseRoute", () => {
 
 import { neighbours } from "../route.js";
 
-test("neighbours finds previous and next without wrapping", () => {
-  const photos = [{ id: "a" }, { id: "b" }, { id: "c" }];
-  assert.deepEqual(neighbours(photos, "b"), { index: 1, prev: photos[0], next: photos[2] });
-  assert.deepEqual(neighbours(photos, "a"), { index: 0, prev: null, next: photos[1] });
-  assert.deepEqual(neighbours(photos, "c"), { index: 2, prev: photos[1], next: null });
+const item = (slug, id) => ({ slug, photo: { id } });
+
+test("neighbours finds previous and next items without wrapping", () => {
+  const items = [item("a", "1"), item("a", "2"), item("b", "1")];
+  assert.deepEqual(neighbours(items, "a", "2"), { index: 1, prev: items[0], next: items[2] });
+  assert.deepEqual(neighbours(items, "a", "1"), { index: 0, prev: null, next: items[1] });
+  assert.deepEqual(neighbours(items, "b", "1"), { index: 2, prev: items[1], next: null });
 });
 
-test("neighbours returns null for an unknown id", () => {
-  assert.equal(neighbours([{ id: "a" }], "zzz"), null);
+test("neighbours tells apart the same photo id in different categories", () => {
+  const items = [item("a", "1"), item("b", "1")];
+  assert.equal(neighbours(items, "b", "1").index, 1);
+});
+
+test("neighbours returns null for an unknown photo", () => {
+  assert.equal(neighbours([item("a", "1")], "b", "1"), null);
+  assert.equal(neighbours([item("a", "1")], "a", "zzz"), null);
 });
 
 import { interleave } from "../route.js";

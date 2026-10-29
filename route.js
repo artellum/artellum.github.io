@@ -12,10 +12,11 @@ export function routeHref(route) {
   return `#/${encodeURIComponent(route.slug)}/${encodeURIComponent(route.id)}`;
 }
 
-export function neighbours(photos, id) {
-  const index = photos.findIndex((p) => p.id === id);
+// items are { slug, photo }; the same photo id may appear in two categories, so match on both.
+export function neighbours(items, slug, id) {
+  const index = items.findIndex((item) => item.slug === slug && item.photo.id === id);
   if (index === -1) return null;
-  return { index, prev: photos[index - 1] ?? null, next: photos[index + 1] ?? null };
+  return { index, prev: items[index - 1] ?? null, next: items[index + 1] ?? null };
 }
 
 // One photo from each category in turn, so a mixed wall does not start with 100 of the same thing.
