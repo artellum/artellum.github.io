@@ -22,7 +22,7 @@ const message = (text) => el("p", { className: "message" }, text);
 function homeView() {
   document.title = SITE;
   return [
-    el("p", { className: "intro" }, "A small collection of handmade things."),
+    el("p", { className: "intro" }, "a small collection of handmade things."),
     el(
       "ul",
       { className: "categories" },
@@ -39,7 +39,7 @@ function homeView() {
         ),
       ),
     ),
-    el("h2", { className: "all-title" }, "All pieces"),
+    el("h2", { className: "all-title" }, "all pieces"),
     wall(interleave(categories)),
   ];
 }
@@ -57,10 +57,10 @@ function wall(items) {
 }
 
 function wallView(category) {
-  document.title = `${category.name} · ${SITE}`;
+  document.title = `${category.name.toLowerCase()} · ${SITE}`;
   const count = category.photos.length;
   return [
-    el("a", { className: "back", href: "#/" }, "← All pieces"),
+    el("a", { className: "back", href: "#/" }, "← all pieces"),
     el("h1", { className: "cat-title" }, category.name),
     el("p", { className: "cat-meta" }, `${count} ${count === 1 ? "piece" : "pieces"}`),
     wall(category.photos.map((photo) => ({ slug: category.slug, photo }))),
@@ -153,7 +153,7 @@ function showPhoto(category, id) {
   lightbox.caption.textContent = photo.title;
   lightbox.prev.hidden = !nb.prev;
   lightbox.next.hidden = !nb.next;
-  document.title = `${photo.title} · ${category.name} · ${SITE}`;
+  document.title = `${photo.title} · ${category.name.toLowerCase()} · ${SITE}`;
   lightbox.close.focus({ preventScroll: true });
 }
 
@@ -185,7 +185,7 @@ function render() {
     showPhoto(category, route.id);
   } else {
     hideLightbox();
-    if (category) document.title = `${category.name} · ${SITE}`;
+    if (category) document.title = `${category.name.toLowerCase()} · ${SITE}`;
     else document.title = SITE;
   }
   prevView = route.view;
@@ -197,11 +197,11 @@ async function start() {
     if (!res.ok) throw new Error(res.statusText);
     categories = (await res.json()).categories;
   } catch {
-    app.replaceChildren(message("Couldn't load the gallery. Please refresh."));
+    app.replaceChildren(message("couldn't load the gallery. please refresh."));
     return;
   }
   if (!categories.length) {
-    app.replaceChildren(message("Pieces are on their way."));
+    app.replaceChildren(message("pieces are on their way."));
     return;
   }
   render();
