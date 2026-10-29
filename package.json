@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "test": "node --test",
-    "build": "node scripts/build.mjs"
+    "build": "node scripts/build.mjs",
+    "samples": "node scripts/samples.mjs",
+    "preview": "node scripts/preview.mjs"
   },
   "dependencies": {
     "qrcode": "^1.5.4",
