@@ -13,7 +13,6 @@ const listFor = (view) => (view === "home" ? interleave(categories) : itemsOf(ca
 let under = "home"; // the view kept beneath an open photo: "home" or a category slug
 const TILTS = [-1.4, 1.1, -0.8, 1.5, -1.1];
 const FRAMES = ["frame-dark", "frame-dark", "frame-light", "frame-dark", "frame-light", "frame-dark", "frame-dark"];
-const STRIP_SIZE = 8;
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 function el(tag, props = {}, ...children) {
@@ -28,7 +27,6 @@ function homeView() {
   document.title = SITE;
   return [
     el("p", { className: "intro" }, "a small collection of handmade things."),
-    el("div", { className: "strip" }, ...interleave(categories).slice(0, STRIP_SIZE).map(piece)),
     el(
       "ul",
       { className: "categories" },
@@ -39,6 +37,7 @@ function homeView() {
           el(
             "a",
             { href: routeHref({ view: "category", slug: c.slug }) },
+            el("img", { className: "cat-cover", src: c.photos[0].thumb, alt: "", width: 96, height: 96, decoding: "async" }),
             el("span", { className: "cat-name" }, c.name),
             el("span", { className: "cat-count" }, String(c.photos.length)),
           ),
@@ -52,18 +51,18 @@ function homeView() {
   ];
 }
 
-function piece({ slug, photo }, i) {
-  const img = el("img", { src: photo.thumb, alt: photo.title, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
-  const node = el("a", { className: `piece ${FRAMES[i % FRAMES.length]}`, href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
-  node.style.setProperty("--d", String(i % 4));
-  const reveal = () => node.classList.add("in");
-  img.addEventListener("load", reveal, { once: true });
-  img.addEventListener("error", reveal, { once: true });
-  return node;
-}
-
 function wall(items) {
-  return el("div", { className: "wall" }, ...items.map(piece));
+  const node = el("div", { className: "wall" });
+  items.forEach(({ slug, photo }, i) => {
+    const img = el("img", { src: photo.thumb, alt: photo.title, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
+    const piece = el("a", { className: `piece ${FRAMES[i % FRAMES.length]}`, href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
+    piece.style.setProperty("--d", String(i % 4));
+    const reveal = () => piece.classList.add("in");
+    img.addEventListener("load", reveal, { once: true });
+    img.addEventListener("error", reveal, { once: true });
+    node.append(piece);
+  });
+  return node;
 }
 
 function wallView(category) {
