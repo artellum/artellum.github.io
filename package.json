@@ -6,7 +6,8 @@
     "test": "node --test",
     "build": "node scripts/build.mjs",
     "samples": "node scripts/samples.mjs",
-    "preview": "node scripts/preview.mjs"
+    "preview": "node scripts/preview.mjs",
+    "qr": "node scripts/qr.mjs"
   },
   "dependencies": {
     "qrcode": "^1.5.4",
