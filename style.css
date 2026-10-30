@@ -256,7 +256,7 @@ a { color: inherit; }
 .about .about-kicker { margin-bottom: 8px; font: 500 12px/1.4 var(--font-ui); letter-spacing: 0.14em; color: var(--ink-soft); }
 .about h2 { margin: 0 0 14px; font: 400 clamp(24px, 6.4vw, 28px)/1.2 var(--font-title); }
 .about a { text-underline-offset: 3px; }
-.about .sign { margin: 16px 0 0; font: 400 26px/1.6 var(--font-sign); }
+.about p.sign { margin: 16px 0 0; font: 400 26px/1.6 var(--font-sign); }
 .spread .about {
   position: absolute; margin: 0;
   right: calc(50% + var(--pw) * 0.08); top: calc((100% - var(--foot)) / 2 + 6px); translate: 0 -50%;
