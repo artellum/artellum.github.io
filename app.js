@@ -10,7 +10,7 @@ const KIND = { contents: "contents", category: "chapter", photo: "plate", end: "
 const MAX_LEAVES = 4; // a long jump riffles a few leaves instead of turning every page
 const COVER_Z = [3, 1]; // above the pages while closed, beneath the left-hand page once open
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-const spreadMedia = matchMedia("(min-width: 700px) and (min-aspect-ratio: 5/4)");
+const spreadMedia = matchMedia("(min-width: 700px) and (min-height: 500px) and (min-aspect-ratio: 5/4)");
 
 let categories = [];
 let slugs = [];
@@ -31,7 +31,8 @@ function el(tag, props = {}, ...children) {
 }
 
 const message = (text) => el("p", { className: "message" }, text);
-const link = (route, ...children) => el("a", { href: routeHref(route) }, ...children);
+// Not draggable: a mouse drag that starts on a link would pick the link up instead of turning the page.
+const link = (route, ...children) => el("a", { href: routeHref(route), draggable: false }, ...children);
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const clamp = (v) => Math.min(1, Math.max(0, v));
 const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -224,11 +225,15 @@ function buildBook() {
   };
   const bar = el("nav", { className: "controls" }, controls.contents, controls.prev, controls.counter, controls.next, controls.close);
   bar.setAttribute("aria-label", "Pages");
-  const hint = el("p", { className: "hint" }, `${matchMedia("(hover: hover)").matches ? "click" : "tap"} the book to open it`);
+  // The about label lives in index.html so its words are easy to edit; beside the book on a wide screen, below it on a phone.
+  const about = document.getElementById("about");
+  const toAbout = el("button", { className: "to-about", type: "button" }, "about the maker ↓");
+  toAbout.addEventListener("click", () => about.scrollIntoView({ behavior: reducedMotion.matches ? "auto" : "smooth" }));
+  const hint = el("div", { className: "hint" }, el("p", {}, `${matchMedia("(hover: hover)").matches ? "click" : "tap"} the book to open it`), toAbout);
   const status = el("p", { className: "sr-only" });
   status.setAttribute("aria-live", "polite");
-  const scene = el("div", { className: "scene" }, el("div", { className: "stage" }, root), el("div", { className: "foot" }, hint, bar), status);
-  return { scene, root, block, left, cover, bar, hint, status, ...controls };
+  const scene = el("div", { className: "scene" }, el("div", { className: "stage" }, root), el("div", { className: "foot" }, hint, bar), about, status);
+  return { scene, root, block, left, cover, bar, hint, about, status, ...controls };
 }
 
 function setBlock(i, node) {
@@ -256,8 +261,12 @@ function updateUi() {
   const open = shown !== -1;
   ui.scene.classList.toggle("is-open", open);
   ui.bar.inert = !open;
+  ui.hint.inert = open;
+  ui.about.inert = open;
   ui.contents.disabled = shown <= 0;
-  ui.prev.disabled = shown <= 0;
+  // Going back from the first page closes the book.
+  ui.prev.disabled = !open;
+  ui.prev.setAttribute("aria-label", shown === 0 ? "Close the book" : "Previous page");
   ui.next.disabled = !open || shown >= pages.length - 1;
   ui.counter.textContent = open ? `${shown + 1} / ${pages.length}` : "";
   ui.status.textContent = open ? `page ${shown + 1} of ${pages.length}` : "";
@@ -290,6 +299,9 @@ function beginTurn(from, target) {
   });
   const start = dir > 0 ? 0 : 1;
   for (const { node, z } of leaves) pose(node, start, z);
+  // The page that moved onto the leaf has left its old place empty, so that place is drawn afresh next time.
+  if (dir > 0) blockAt = null;
+  else leftAt = null;
   if (dir > 0) setBlock(target);
   else setLeft(target);
   return { from, target, dir, leaves, start, end: 1 - start };
@@ -324,6 +336,8 @@ async function openBook(target, instant) {
   ui.root.dataset.state = "opening";
   ui.cover.inert = true;
   land(target);
+  // On a phone the about label may have been scrolled into view; the open book fills the screen.
+  ui.scene.scrollTo({ top: 0, behavior: instant ? "auto" : "smooth" });
   if (instant) setCover(1);
   else await animateCover(1, 1150);
   ui.root.dataset.state = "open";
@@ -337,8 +351,11 @@ async function closeBook(instant) {
   setLeft(0); // the inside of the cover shows as it lifts
   shown = -1;
   updateUi();
+  // The hint takes the arrows' place, so it waits for the cover to settle; a quick second tap on ‹ should not land on it.
+  ui.hint.inert = true;
   if (instant) setCover(0);
   else await animateCover(0, 1050);
+  ui.hint.inert = false;
   ui.root.dataset.state = "closed";
   setBlock(0);
   if (hadFocus) ui.cover.querySelector(".cover-open").focus({ preventScroll: true });
@@ -382,20 +399,26 @@ function openFromCover() {
   sync();
 }
 
+let leaving = false; // a history.back() is on its way; a second one would leave the site
 function close() {
-  if (history.state?.opened) history.back();
-  else {
+  if (leaving) return;
+  if (history.state?.opened) {
+    leaving = true;
+    history.back();
+  } else {
     history.replaceState(null, "", routeHref({ view: "cover" }));
     sync();
   }
 }
 
-// Steps from the page being turned to, so quick taps add up.
+// Steps from the page being turned to, so quick taps add up. Stepping back from the first page closes the book.
 function step(d) {
-  if (shown === -1) return;
-  const at = pageIndex(pages, parseRoute(location.hash, slugs));
+  const route = parseRoute(location.hash, slugs);
+  if (shown === -1 || route.view === "cover") return;
+  const at = pageIndex(pages, route);
   const next = (at === -1 ? shown : at) + d;
-  if (next >= 0 && next < pages.length) go(pages[next]);
+  if (next < 0) close();
+  else if (next < pages.length) go(pages[next]);
 }
 
 async function peek(to, ms) {
@@ -484,8 +507,9 @@ function wireDrag() {
     const done = e.type === "pointerup" && (turn.dir > 0 ? p > 0.3 || v < -0.35 : p < 0.7 || v > 0.35);
     const to = done ? turn.end : turn.start;
     const { node, z } = turn.leaves[0];
-    await tween(p, to, 140 + 380 * Math.abs(to - p), (q) => { pose(node, q, z); shadow(q); }, easeOut);
+    // Set the address before the page settles, so a tap on an arrow meanwhile steps from the new page.
     if (done) history.replaceState(history.state, "", routeHref(pages[turn.target]));
+    await tween(p, to, 140 + 380 * Math.abs(to - p), (q) => { pose(node, q, z); shadow(q); }, easeOut);
     endTurn(turn, done);
     busy = false;
     sync();
@@ -504,13 +528,18 @@ function wire() {
   ui.root.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") peek(0.05, 320); });
   ui.root.addEventListener("pointerleave", (e) => { if (e.pointerType === "mouse") peek(0, 320); });
   addEventListener("keydown", onKey);
-  addEventListener("hashchange", sync);
+  addEventListener("hashchange", () => {
+    leaving = false;
+    sync();
+  });
   spreadMedia.addEventListener("change", layout);
   wireDrag();
 }
 
 function layout() {
   ui.scene.classList.toggle("spread", spreadMedia.matches);
+  // A phone scrolled down to the about label, then turned sideways, would otherwise keep that offset.
+  ui.scene.scrollTop = 0;
 }
 
 async function start() {
