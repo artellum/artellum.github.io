@@ -1,68 +1,70 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseRoute, routeHref } from "../route.js";
+import { bookPages, pageIndex, parseRoute, routeHref } from "../route.js";
 
 const slugs = ["a"];
 
-test("empty hash and bare slash are home", () => {
-  assert.deepEqual(parseRoute("", slugs), { view: "home" });
-  assert.deepEqual(parseRoute("#/", slugs), { view: "home" });
+test("empty hash and bare slash are the closed cover", () => {
+  assert.deepEqual(parseRoute("", slugs), { view: "cover" });
+  assert.deepEqual(parseRoute("#/", slugs), { view: "cover" });
 });
 
 test("known category is a category route", () => {
   assert.deepEqual(parseRoute("#/a", slugs), { view: "category", slug: "a" });
 });
 
-test("unknown category falls back to home", () => {
-  assert.deepEqual(parseRoute("#/nope", slugs), { view: "home" });
-  assert.deepEqual(parseRoute("#/nope/x", slugs), { view: "home" });
+test("unknown category falls back to the cover", () => {
+  assert.deepEqual(parseRoute("#/nope", slugs), { view: "cover" });
+  assert.deepEqual(parseRoute("#/nope/x", slugs), { view: "cover" });
 });
 
 test("category plus id is a photo route", () => {
   assert.deepEqual(parseRoute("#/a/x", slugs), { view: "photo", slug: "a", id: "x" });
 });
 
+test("contents and end are pages of their own", () => {
+  assert.deepEqual(parseRoute("#/contents", slugs), { view: "contents" });
+  assert.deepEqual(parseRoute("#/end", slugs), { view: "end" });
+  assert.deepEqual(parseRoute("#/contents/x", slugs), { view: "cover" });
+});
+
+test("a category named contents wins over the contents page", () => {
+  assert.deepEqual(parseRoute("#/contents", ["contents"]), { view: "category", slug: "contents" });
+});
+
 test("routeHref is the inverse of parseRoute", () => {
-  for (const hash of ["#/", "#/a", "#/a/x"]) {
+  for (const hash of ["#/", "#/a", "#/a/x", "#/contents", "#/end"]) {
     assert.equal(routeHref(parseRoute(hash, slugs)), hash);
   }
 });
 
-import { neighbours } from "../route.js";
+const categories = [
+  { slug: "a", photos: [{ id: "1" }, { id: "2" }] },
+  { slug: "b", photos: [{ id: "1" }] },
+];
 
-const item = (slug, id) => ({ slug, photo: { id } });
-
-test("neighbours finds previous and next items without wrapping", () => {
-  const items = [item("a", "1"), item("a", "2"), item("b", "1")];
-  assert.deepEqual(neighbours(items, "a", "2"), { index: 1, prev: items[0], next: items[2] });
-  assert.deepEqual(neighbours(items, "a", "1"), { index: 0, prev: null, next: items[1] });
-  assert.deepEqual(neighbours(items, "b", "1"), { index: 2, prev: items[1], next: null });
-});
-
-test("neighbours tells apart the same photo id in different categories", () => {
-  const items = [item("a", "1"), item("b", "1")];
-  assert.equal(neighbours(items, "b", "1").index, 1);
-});
-
-test("neighbours returns null for an unknown photo", () => {
-  assert.equal(neighbours([item("a", "1")], "b", "1"), null);
-  assert.equal(neighbours([item("a", "1")], "a", "zzz"), null);
-});
-
-import { interleave } from "../route.js";
-
-test("interleave takes one photo from each category in turn", () => {
-  const categories = [
-    { slug: "a", photos: [{ id: "a1" }, { id: "a2" }, { id: "a3" }] },
-    { slug: "b", photos: [{ id: "b1" }] },
-    { slug: "c", photos: [{ id: "c1" }, { id: "c2" }] },
-  ];
+test("bookPages runs contents, each chapter with its plates, then the end", () => {
   assert.deepEqual(
-    interleave(categories).map((item) => `${item.slug}/${item.photo.id}`),
-    ["a/a1", "b/b1", "c/c1", "a/a2", "c/c2", "a/a3"],
+    bookPages(categories).map((page) => [page.view, page.slug, page.id, page.plate].filter(Boolean).join(" ")),
+    ["contents", "category a", "photo a 1 1", "photo a 2 2", "category b", "photo b 1 3", "end"],
   );
 });
 
-test("interleave of no categories is empty", () => {
-  assert.deepEqual(interleave([]), []);
+test("pageIndex finds every route and tells apart the same photo id in different categories", () => {
+  const pages = bookPages(categories);
+  assert.equal(pageIndex(pages, { view: "contents" }), 0);
+  assert.equal(pageIndex(pages, { view: "category", slug: "b" }), 4);
+  assert.equal(pageIndex(pages, { view: "photo", slug: "a", id: "1" }), 2);
+  assert.equal(pageIndex(pages, { view: "photo", slug: "b", id: "1" }), 5);
+  assert.equal(pageIndex(pages, { view: "end" }), 6);
+});
+
+test("pageIndex is -1 for the cover and for photos not in the book", () => {
+  const pages = bookPages(categories);
+  assert.equal(pageIndex(pages, { view: "cover" }), -1);
+  assert.equal(pageIndex(pages, { view: "photo", slug: "a", id: "zzz" }), -1);
+});
+
+test("bookPages of no categories is just contents and the end", () => {
+  assert.deepEqual(bookPages([]).map((page) => page.view), ["contents", "end"]);
 });

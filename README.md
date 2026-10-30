@@ -1,6 +1,8 @@
 # Artellum gallery
 
-A phone-first photo gallery for the exhibition. Visitors scan a QR code, pick a category and browse the pieces. No database: each category is a folder, and a script shrinks the photos for the web.
+A phone-first photo gallery for the exhibition. Visitors scan a QR code and find a closed album on the wall. Tapping it opens the cover onto a contents page, and from there they turn pages by swiping, tapping the page edge or using the arrows. Each category is a chapter, and each photo gets a page of its own. On a wide screen the album lies open as a two-page spread, with each photo's caption on the facing page. No database: each category is a folder, and a script shrinks the photos for the web.
+
+The cover shows the first photo of the first category. Photos sort by filename, so to change the cover, reorder the categories (see below) or rename a photo so it sorts first.
 
 ## Add photos
 
