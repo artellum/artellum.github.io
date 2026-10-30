@@ -41,7 +41,7 @@ Preview never touches your real `img/` or `photos.json`.
 npm run qr -- https://artellum.github.io/
 ```
 
-Writes `qr/artellum-qr.png` (2400 × 3000, ready to print) and `qr/artellum-qr.svg`: the code hanging in a dark frame on a sage wall, with "Artellum" in its handwritten font and a few italic lines underneath. The lettering is drawn from the font files in `fonts/` (Homemade Apple, Apache 2.0; Spectral, OFL), so the card prints the same anywhere. The lines under the frame live in `caption()` in `scripts/qr.mjs`.
+Writes `qr/artellum-qr.png` (2400 × 3000, ready to print) and `qr/artellum-qr.svg`: the code painted in fine dots from the tea-light photo in `qr/photo.jpg`, hanging in a dark frame on a sage wall, with "Artellum" in its handwritten font and an italic line underneath. To paint it from another photo, add its path after the URL (`npm run qr -- https://artellum.github.io/ path/to/photo.jpg`); bright, colourful photos on a dark background scan best. The lettering is drawn from the font files in `fonts/` (Homemade Apple, Apache 2.0; Spectral, OFL), so the card prints the same anywhere. The lines under the frame live in `caption()` in `scripts/qr.mjs`.
 
 `npm test` checks that the card still scans back to the URL, including small and slightly blurred. Still scan the printed card with a phone before the exhibition.
 

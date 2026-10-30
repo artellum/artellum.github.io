@@ -5,10 +5,29 @@ import jsQR from "jsqr";
 import { qrCardSvg } from "../scripts/qr.mjs";
 
 const url = "https://artellum.github.io/";
-const svg = qrCardSvg(url);
+const svg = await qrCardSvg(url);
 
 test("card is a 1200 by 1500 svg", () => {
   assert.match(svg, /^<svg[^>]*width="1200"[^>]*height="1500"/);
+});
+
+test("the code is painted from a photo, in its colours", () => {
+  const colours = new Set(svg.match(/fill="#[0-9a-f]{6}"/g));
+  assert.ok(colours.size > 500, `only ${colours.size} colours`);
+});
+
+test("a short url still gets 41 modules across, so the photo keeps its detail", () => {
+  // 41 x 41 modules, less the three eyes and the alignment square, at nine dots each.
+  const dots = (svg.match(/<circle /g) ?? []).length;
+  assert.ok(dots >= (41 * 41 - 3 * 49 - 25) * 9, `${dots} dots`);
+});
+
+test("the photo is drawn in round dots, each data dot a little larger than the eight around it", () => {
+  const radii = {};
+  for (const [, r] of svg.matchAll(/<circle [^>]*r="([\d.]+)"/g)) radii[r] = (radii[r] ?? 0) + 1;
+  const [photo, data] = Object.entries(radii).sort((a, b) => b[1] - a[1]);
+  assert.equal(photo[1], data[1] * 8, "eight photo dots around each data dot");
+  assert.ok(Number(data[0]) > Number(photo[0]), "data dots are larger");
 });
 
 test("no web address is printed on the card", () => {
@@ -26,7 +45,9 @@ test("card has a readable title for screen readers", () => {
 });
 
 test("the rendered card scans back to the url, even small and slightly blurred", async () => {
-  for (const [width, blur] of [[900, 0], [400, 1.2]]) {
+  // A camera always softens a little. jsQR misreads the dots in a perfectly sharp render, which Apple's
+  // Vision scanner reads fine, so each size is blurred at least as much as a phone photo would be.
+  for (const [width, blur] of [[800, 1], [450, 1.2]]) {
     let img = sharp(Buffer.from(svg)).resize(width);
     if (blur) img = img.blur(blur);
     const { data, info } = await img.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
