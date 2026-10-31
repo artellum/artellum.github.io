@@ -5,49 +5,76 @@
       "name": "Door hangings",
       "photos": [
         {
-          "id": "pink-lotus-keychains",
-          "title": "Pink lotus keychains",
-          "thumb": "img/door-hangings/pink-lotus-keychains-t.jpg",
-          "large": "img/door-hangings/pink-lotus-keychains-l.jpg",
+          "id": "lotus",
+          "title": "Lotus",
+          "thumb": "img/door-hangings/lotus--pink-lotus-keychains-t.jpg",
+          "large": "img/door-hangings/lotus--pink-lotus-keychains-l.jpg",
           "w": 600,
           "h": 800,
-          "frame": "#cbbbae"
+          "frame": "#cbbbae",
+          "variants": [
+            {
+              "id": "pink-lotus-keychains",
+              "colour": "Pink lotus keychains",
+              "thumb": "img/door-hangings/lotus--pink-lotus-keychains-t.jpg",
+              "large": "img/door-hangings/lotus--pink-lotus-keychains-l.jpg",
+              "w": 600,
+              "h": 800,
+              "frame": "#cbbbae",
+              "swatch": "img/door-hangings/lotus--pink-lotus-keychains-s.jpg"
+            },
+            {
+              "id": "white-lotus-keychains",
+              "colour": "White lotus keychains",
+              "thumb": "img/door-hangings/lotus--white-lotus-keychains-t.jpg",
+              "large": "img/door-hangings/lotus--white-lotus-keychains-l.jpg",
+              "w": 600,
+              "h": 800,
+              "frame": "#cbbaae",
+              "swatch": "img/door-hangings/lotus--white-lotus-keychains-s.jpg"
+            }
+          ]
         },
         {
-          "id": "shubh-labh-hangings-maroon-and-green",
-          "title": "Shubh labh hangings maroon and green",
-          "thumb": "img/door-hangings/shubh-labh-hangings-maroon-and-green-t.jpg",
-          "large": "img/door-hangings/shubh-labh-hangings-maroon-and-green-l.jpg",
+          "id": "shubh-labh",
+          "title": "Shubh labh",
+          "thumb": "img/door-hangings/shubh-labh--shubh-labh-hangings-maroon-and-green-t.jpg",
+          "large": "img/door-hangings/shubh-labh--shubh-labh-hangings-maroon-and-green-l.jpg",
           "w": 600,
           "h": 800,
-          "frame": "#cbc0ae"
-        },
-        {
-          "id": "shubh-labh-hangings-orange-and-blue",
-          "title": "Shubh labh hangings orange and blue",
-          "thumb": "img/door-hangings/shubh-labh-hangings-orange-and-blue-t.jpg",
-          "large": "img/door-hangings/shubh-labh-hangings-orange-and-blue-l.jpg",
-          "w": 600,
-          "h": 800,
-          "frame": "#cbbdae"
-        },
-        {
-          "id": "shubh-labh-hangings-red-and-gold",
-          "title": "Shubh labh hangings red and gold",
-          "thumb": "img/door-hangings/shubh-labh-hangings-red-and-gold-t.jpg",
-          "large": "img/door-hangings/shubh-labh-hangings-red-and-gold-l.jpg",
-          "w": 600,
-          "h": 800,
-          "frame": "#cbbeae"
-        },
-        {
-          "id": "white-lotus-keychains",
-          "title": "White lotus keychains",
-          "thumb": "img/door-hangings/white-lotus-keychains-t.jpg",
-          "large": "img/door-hangings/white-lotus-keychains-l.jpg",
-          "w": 600,
-          "h": 800,
-          "frame": "#cbbaae"
+          "frame": "#cbc0ae",
+          "variants": [
+            {
+              "id": "shubh-labh-hangings-maroon-and-green",
+              "colour": "Shubh labh hangings maroon and green",
+              "thumb": "img/door-hangings/shubh-labh--shubh-labh-hangings-maroon-and-green-t.jpg",
+              "large": "img/door-hangings/shubh-labh--shubh-labh-hangings-maroon-and-green-l.jpg",
+              "w": 600,
+              "h": 800,
+              "frame": "#cbc0ae",
+              "swatch": "img/door-hangings/shubh-labh--shubh-labh-hangings-maroon-and-green-s.jpg"
+            },
+            {
+              "id": "shubh-labh-hangings-orange-and-blue",
+              "colour": "Shubh labh hangings orange and blue",
+              "thumb": "img/door-hangings/shubh-labh--shubh-labh-hangings-orange-and-blue-t.jpg",
+              "large": "img/door-hangings/shubh-labh--shubh-labh-hangings-orange-and-blue-l.jpg",
+              "w": 600,
+              "h": 800,
+              "frame": "#cbbdae",
+              "swatch": "img/door-hangings/shubh-labh--shubh-labh-hangings-orange-and-blue-s.jpg"
+            },
+            {
+              "id": "shubh-labh-hangings-red-and-gold",
+              "colour": "Shubh labh hangings red and gold",
+              "thumb": "img/door-hangings/shubh-labh--shubh-labh-hangings-red-and-gold-t.jpg",
+              "large": "img/door-hangings/shubh-labh--shubh-labh-hangings-red-and-gold-l.jpg",
+              "w": 600,
+              "h": 800,
+              "frame": "#cbbeae",
+              "swatch": "img/door-hangings/shubh-labh--shubh-labh-hangings-red-and-gold-s.jpg"
+            }
+          ]
         }
       ]
     },
