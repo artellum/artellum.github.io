@@ -623,7 +623,7 @@
           "thumb": "img/tea-lights/paisley-tea-lights--1-ivory-t.jpg",
           "large": "img/tea-lights/paisley-tea-lights--1-ivory-l.jpg",
           "w": 600,
-          "h": 450,
+          "h": 800,
           "frame": "#b4c5c5",
           "variants": [
             {
@@ -632,7 +632,7 @@
               "thumb": "img/tea-lights/paisley-tea-lights--1-ivory-t.jpg",
               "large": "img/tea-lights/paisley-tea-lights--1-ivory-l.jpg",
               "w": 600,
-              "h": 450,
+              "h": 800,
               "frame": "#b4c5c5",
               "swatch": "img/tea-lights/paisley-tea-lights--1-ivory-s.jpg"
             },
@@ -642,8 +642,8 @@
               "thumb": "img/tea-lights/paisley-tea-lights--2-yellow-t.jpg",
               "large": "img/tea-lights/paisley-tea-lights--2-yellow-l.jpg",
               "w": 600,
-              "h": 450,
-              "frame": "#423a24",
+              "h": 800,
+              "frame": "#cbc4ae",
               "swatch": "img/tea-lights/paisley-tea-lights--2-yellow-s.jpg"
             },
             {
@@ -652,7 +652,7 @@
               "thumb": "img/tea-lights/paisley-tea-lights--3-peach-t.jpg",
               "large": "img/tea-lights/paisley-tea-lights--3-peach-l.jpg",
               "w": 600,
-              "h": 450,
+              "h": 800,
               "frame": "#c3beb6",
               "swatch": "img/tea-lights/paisley-tea-lights--3-peach-s.jpg"
             },
@@ -662,7 +662,7 @@
               "thumb": "img/tea-lights/paisley-tea-lights--4-brown-t.jpg",
               "large": "img/tea-lights/paisley-tea-lights--4-brown-l.jpg",
               "w": 600,
-              "h": 450,
+              "h": 800,
               "frame": "#c3beb6",
               "swatch": "img/tea-lights/paisley-tea-lights--4-brown-s.jpg"
             },
@@ -672,7 +672,7 @@
               "thumb": "img/tea-lights/paisley-tea-lights--5-maroon-t.jpg",
               "large": "img/tea-lights/paisley-tea-lights--5-maroon-l.jpg",
               "w": 600,
-              "h": 450,
+              "h": 800,
               "frame": "#c3beb6",
               "swatch": "img/tea-lights/paisley-tea-lights--5-maroon-s.jpg"
             },
