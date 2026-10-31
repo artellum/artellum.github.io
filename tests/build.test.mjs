@@ -174,6 +174,20 @@ test("a folder inside a category is one design, with its photos as colours in fi
   await rm(ws.root, { recursive: true });
 });
 
+test("a design takes the shape most of its colours share, whatever shape the first one is", async () => {
+  const ws = await workspace();
+  await photo(path.join(ws.src, "tea-lights", "flower", "1-teal.jpg"), 400, 300);
+  await photo(path.join(ws.src, "tea-lights", "flower", "2-red.jpg"), 300, 400);
+  await photo(path.join(ws.src, "tea-lights", "flower", "3-pink.jpg"), 300, 400);
+  await build(ws);
+  const [design] = (await manifest(ws.out)).categories[0].photos;
+  assert.deepEqual([design.w, design.h], [300, 400]);
+  // The wall still shows the first colour, and each colour keeps its own size.
+  assert.equal(design.thumb, design.variants[0].thumb);
+  assert.deepEqual([design.variants[0].w, design.variants[0].h], [400, 300]);
+  await rm(ws.root, { recursive: true });
+});
+
 test("a design folder and a photo with the same name both survive", async () => {
   const ws = await workspace();
   await photo(path.join(ws.src, "tea-lights", "lotus", "pink.jpg"), 100, 100);

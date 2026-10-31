@@ -29,6 +29,8 @@ The wall then shows one frame for the design, with the other colours' frames pee
 
 The wall shows the first colour by filename. To pick a different one, put numbers in front: `1-red-and-gold.jpg`, `2-maroon-and-green.jpg`. The number only sets the order and is left out of the colour name.
 
+A design keeps one shape while visitors switch colours: whichever shape (portrait or landscape) most of its photos have. Photos of the other shape are trimmed from the middle to fit, so keep the piece near the centre of the shot.
+
 ### Category names and order
 
 Folder names become the category names ("tea-lights" shows as "Tea lights"), in alphabetical order. To change either, edit `categories.json`:

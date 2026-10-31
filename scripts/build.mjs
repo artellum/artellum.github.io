@@ -25,6 +25,20 @@ const visibleEntries = async (dir) =>
 
 const isPhoto = (entry) => entry.isFile() && IMAGE_EXTS.has(path.extname(entry.name).toLowerCase());
 
+// A design keeps one shape while its colours change: the one most of its photos share, or the first
+// colour's on a tie. The site crops photos of another shape to it from the middle, where the piece is.
+function commonShape(variants) {
+  const counts = new Map();
+  for (const v of variants) {
+    const ratio = (v.w / v.h).toFixed(2);
+    const seen = counts.get(ratio);
+    counts.set(ratio, { w: seen?.w ?? v.w, h: seen?.h ?? v.h, n: (seen?.n ?? 0) + 1 });
+  }
+  // A Map keeps insertion order, so on a tie the shape seen first wins.
+  const { w, h } = [...counts.values()].reduce((best, shape) => (shape.n > best.n ? shape : best));
+  return { w, h };
+}
+
 function uniqueId(used, name) {
   const stem = slugify(name) || "photo";
   let id = stem;
@@ -151,7 +165,7 @@ export async function build({ src, out, categoriesFile }) {
           first ??= image;
           variants.push({ id: colourId, colour: colourFromFilename(file.name), ...image, swatch: `img/${slug}/${name}-s.jpg` });
         }
-        if (first) photos.push({ id, title: titleFromName(entry.name), ...first, variants });
+        if (first) photos.push({ id, title: titleFromName(entry.name), ...first, ...commonShape(variants), variants });
       } else if (isPhoto(entry)) {
         const id = uniqueId(usedIds, path.parse(entry.name).name);
         const image = await resized(entry.name, id);
