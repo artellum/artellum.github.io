@@ -182,6 +182,8 @@ function showPhoto(slug, id) {
   void frame.offsetWidth;
   frame.style.animation = "";
   frame.classList.toggle("has-colours", variants.length > 1);
+  // Room under the photo for the swatches; a narrow frame fits about 9 to a row.
+  frame.style.setProperty("--swatch-rows", String(Math.ceil(variants.length / 9)));
   lightbox.title.textContent = photo.title;
   lightbox.swatches.replaceChildren(...(variants.length > 1 ? variants.map(swatch) : []));
   showVariant(variants[0] ?? photo);
@@ -208,7 +210,7 @@ function showVariant(variant) {
 }
 
 function swatch(variant) {
-  const crop = el("span", {}, el("img", { src: variant.thumb, alt: "", decoding: "async" }));
+  const crop = el("span", {}, el("img", { src: variant.swatch, alt: "", decoding: "async" }));
   const b = el("button", { className: "swatch", type: "button", title: variant.colour }, crop);
   b.dataset.id = variant.id;
   b.setAttribute("aria-label", variant.colour);

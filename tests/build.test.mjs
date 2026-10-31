@@ -165,6 +165,12 @@ test("a folder inside a category is one design, with its photos as colours in fi
   assert.deepEqual([design.thumb, design.large, design.w, design.h, design.frame], [design.variants[0].thumb, design.variants[0].large, 300, 200, design.variants[0].frame]);
   assert.equal(design.variants[1].thumb, "img/tea-lights/mirror-ring--2-teal-t.jpg");
   assert.ok(existsSync(path.join(ws.out, "img/tea-lights/mirror-ring--2-teal-l.jpg")));
+  // Each colour gets a small square swatch; the design itself and single photos do not.
+  assert.equal(design.variants[1].swatch, "img/tea-lights/mirror-ring--2-teal-s.jpg");
+  const swatch = await meta(path.join(ws.out, design.variants[1].swatch));
+  assert.deepEqual([swatch.width, swatch.height], [120, 120]);
+  assert.equal(design.swatch, undefined);
+  assert.ok(!existsSync(path.join(ws.out, "img/tea-lights/lotus-s.jpg")));
   await rm(ws.root, { recursive: true });
 });
 
@@ -197,11 +203,12 @@ test("removing a colour or a whole design removes its files", async () => {
   await photo(path.join(ws.src, "tea-lights", "single.jpg"), 100, 100);
   await build(ws);
   await rm(path.join(ws.src, "tea-lights", "lotus", "white.jpg"));
-  assert.equal((await build(ws)).removed, 2);
+  assert.equal((await build(ws)).removed, 3);
   assert.ok(!existsSync(path.join(ws.out, "img/tea-lights/lotus--white-t.jpg")));
+  assert.ok(!existsSync(path.join(ws.out, "img/tea-lights/lotus--white-s.jpg")));
   assert.ok(existsSync(path.join(ws.out, "img/tea-lights/lotus--pink-t.jpg")));
   await rm(path.join(ws.src, "tea-lights", "lotus"), { recursive: true });
-  assert.equal((await build(ws)).removed, 2);
+  assert.equal((await build(ws)).removed, 3);
   assert.deepEqual((await manifest(ws.out)).categories[0].photos.map((p) => p.id), ["single"]);
   await rm(ws.root, { recursive: true });
 });

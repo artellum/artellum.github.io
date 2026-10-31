@@ -11,6 +11,7 @@ import { categoryLabel, colourFromFilename, orderCategories, slugify, titleFromF
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"]);
 const LARGE_EDGE = 1600;
 const THUMB_WIDTH = 600;
+const SWATCH = 120;
 const QUALITY = 80;
 
 async function readCategoriesFile(file) {
@@ -59,6 +60,14 @@ async function resizeBoth(file, largePath, thumbPath) {
   }
 }
 
+// A colour's swatch: a small square from the middle of the photo, where the piece usually is.
+async function cropSwatch(thumbPath, swatchPath) {
+  const { width, height } = await sharp(thumbPath).metadata();
+  const side = Math.round(Math.min(width, height) / 1.6);
+  const region = { left: Math.round((width - side) / 2), top: Math.round((height - side) / 2), width: side, height: side };
+  await sharp(thumbPath).extract(region).resize(SWATCH, SWATCH).jpeg({ quality: QUALITY }).toFile(swatchPath);
+}
+
 // Read from the thumbnail on every run, so frames stay correct for photos that were skipped as unchanged.
 async function frameFor(thumbPath) {
   const { channels, dominant } = await sharp(thumbPath).stats();
@@ -99,21 +108,25 @@ export async function build({ src, out, categoriesFile }) {
     const files = new Set();
     const usedIds = new Set();
 
-    // Makes img/<slug>/<name>-l.jpg and -t.jpg from one original; null, with a warning, if it cannot be read.
-    const resized = async (relative, name) => {
+    // Makes img/<slug>/<name>-l.jpg and -t.jpg from one original, and -s.jpg for a colour's swatch;
+    // null, with a warning, if it cannot be read.
+    const resized = async (relative, name, { swatch = false } = {}) => {
       const source = path.join(src, dirEntry.name, relative);
       const largePath = path.join(imgDir, slug, `${name}-l.jpg`);
       const thumbPath = path.join(imgDir, slug, `${name}-t.jpg`);
+      const swatchPath = path.join(imgDir, slug, `${name}-s.jpg`);
       try {
-        if (await isFresh(source, [largePath, thumbPath])) {
+        if (await isFresh(source, swatch ? [largePath, thumbPath, swatchPath] : [largePath, thumbPath])) {
           report.skipped++;
         } else {
           await mkdir(path.dirname(largePath), { recursive: true });
           await resizeBoth(source, largePath, thumbPath);
+          if (swatch) await cropSwatch(thumbPath, swatchPath);
           report.processed++;
         }
         const { width, height } = await sharp(thumbPath).metadata();
         files.add(`${name}-l.jpg`).add(`${name}-t.jpg`);
+        if (swatch) files.add(`${name}-s.jpg`);
         return { thumb: `img/${slug}/${name}-t.jpg`, large: `img/${slug}/${name}-l.jpg`, w: width, h: height, frame: await frameFor(thumbPath) };
       } catch (err) {
         report.warnings.push(`${dirEntry.name}/${relative}: ${err.message}`);
@@ -132,10 +145,11 @@ export async function build({ src, out, categoriesFile }) {
           if (!isPhoto(file)) continue;
           const colourId = uniqueId(usedColours, path.parse(file.name).name);
           // Slugs never hold "--", so this cannot clash with a single photo's files.
-          const image = await resized(path.join(entry.name, file.name), `${id}--${colourId}`);
+          const name = `${id}--${colourId}`;
+          const image = await resized(path.join(entry.name, file.name), name, { swatch: true });
           if (!image) continue;
           first ??= image;
-          variants.push({ id: colourId, colour: colourFromFilename(file.name), ...image });
+          variants.push({ id: colourId, colour: colourFromFilename(file.name), ...image, swatch: `img/${slug}/${name}-s.jpg` });
         }
         if (first) photos.push({ id, title: titleFromName(entry.name), ...first, variants });
       } else if (isPhoto(entry)) {
