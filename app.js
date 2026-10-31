@@ -63,10 +63,20 @@ function homeView() {
 function wall(items) {
   const node = el("div", { className: "wall" });
   items.forEach(({ slug, photo }, i) => {
-    const img = el("img", { src: photo.thumb, alt: photo.title, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
+    const colours = photo.variants?.length ?? 1;
+    const alt = colours > 1 ? `${photo.title}, in ${colours} colours` : photo.title;
+    const img = el("img", { src: photo.thumb, alt, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
     const piece = el("a", { className: "piece", href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
     piece.style.setProperty("--d", String(i % 4));
     piece.style.setProperty("--frame", frameOf(photo, i));
+    if (colours > 1) {
+      // The other colours' frames peek out behind this one, with a tag saying how many there are.
+      piece.dataset.stack = String(Math.min(colours, 3));
+      photo.variants.slice(1, 3).forEach((v, n) => piece.style.setProperty(`--frame-${n + 2}`, v.frame));
+      const tag = el("span", { className: "colours" }, `${colours} colours`);
+      tag.setAttribute("aria-hidden", "true");
+      piece.append(tag);
+    }
     const reveal = () => piece.classList.add("in");
     img.addEventListener("load", reveal, { once: true });
     img.addEventListener("error", reveal, { once: true });
@@ -93,15 +103,22 @@ function buildLightbox() {
     return b;
   };
   const img = el("img", { alt: "" });
-  const caption = el("figcaption");
+  const title = el("span", { className: "lb-title" });
+  const colour = el("span", { className: "lb-colour" });
+  const swatches = el("div", { className: "swatches" });
+  swatches.setAttribute("role", "group");
+  swatches.setAttribute("aria-label", "Colours");
   const parts = {
     img,
-    caption,
+    title,
+    colour,
+    swatches,
     close: button("lb-close", "Close", "×"),
     prev: button("lb-prev", "Previous photo", "‹"),
     next: button("lb-next", "Next photo", "›"),
   };
-  const root = el("div", { className: "lightbox" }, parts.close, parts.prev, el("figure", {}, img, caption), parts.next);
+  const figure = el("figure", {}, img, el("figcaption", {}, title, colour), swatches);
+  const root = el("div", { className: "lightbox" }, parts.close, parts.prev, figure, parts.next);
   root.setAttribute("role", "dialog");
   root.setAttribute("aria-modal", "true");
   root.setAttribute("aria-label", "Photo viewer");
@@ -155,28 +172,52 @@ function showPhoto(slug, id) {
   const nb = neighbours(items, slug, id);
   const photo = items[nb.index].photo;
   const category = categories.find((c) => c.slug === slug);
-  current = { items, nb };
+  const variants = photo.variants ?? [];
+  current = { items, nb, photo, variant: null };
   document.documentElement.classList.add("lb-open");
   lightbox.root.hidden = false;
-  // The thumbnail is already cached from the wall; swap in the large file once it arrives.
-  lightbox.img.src = photo.thumb;
-  lightbox.img.alt = photo.title;
-  // Size from the known ratio so the thumbnail and the large file fill the same frame.
-  lightbox.img.style.setProperty("--ratio", String(photo.w / photo.h));
   const frame = lightbox.root.querySelector("figure");
   frame.style.setProperty("--tilt", `${TILTS[nb.index % TILTS.length]}deg`);
   frame.style.animation = "none";
   void frame.offsetWidth;
   frame.style.animation = "";
-  const large = new Image();
-  large.onload = () => { if (current?.items === items && current.nb.index === nb.index) lightbox.img.src = photo.large; };
-  large.src = photo.large;
+  frame.classList.toggle("has-colours", variants.length > 1);
+  lightbox.title.textContent = photo.title;
+  lightbox.swatches.replaceChildren(...(variants.length > 1 ? variants.map(swatch) : []));
+  showVariant(variants[0] ?? photo);
   if (nb.next) new Image().src = nb.next.photo.large;
-  lightbox.caption.textContent = photo.title;
   lightbox.prev.hidden = !nb.prev;
   lightbox.next.hidden = !nb.next;
   document.title = `${photo.title} · ${category.name.toLowerCase()} · ${SITE}`;
   lightbox.close.focus({ preventScroll: true });
+}
+
+// One colour of a design, or a single photo (which has no colour of its own).
+function showVariant(variant) {
+  current.variant = variant;
+  // The thumbnail is already cached from the wall or the swatch; swap in the large file once it arrives.
+  lightbox.img.src = variant.thumb;
+  lightbox.img.alt = variant.colour ? `${current.photo.title}, ${variant.colour.toLowerCase()}` : current.photo.title;
+  // Size from the known ratio so the thumbnail and the large file fill the same frame.
+  lightbox.img.style.setProperty("--ratio", String(variant.w / variant.h));
+  const large = new Image();
+  large.onload = () => { if (current?.variant === variant) lightbox.img.src = variant.large; };
+  large.src = variant.large;
+  lightbox.colour.textContent = variant.colour ?? "";
+  for (const b of lightbox.swatches.children) b.setAttribute("aria-pressed", String(b.dataset.id === variant.id));
+}
+
+function swatch(variant) {
+  const crop = el("span", {}, el("img", { src: variant.thumb, alt: "", decoding: "async" }));
+  const b = el("button", { className: "swatch", type: "button", title: variant.colour }, crop);
+  b.dataset.id = variant.id;
+  b.setAttribute("aria-label", variant.colour);
+  b.addEventListener("click", () => {
+    if (current?.variant === variant) return;
+    showVariant(variant);
+    if (!reducedMotion.matches) lightbox.img.animate([{ opacity: 0.35 }, { opacity: 1 }], { duration: 280, easing: "ease-out" });
+  });
+  return b;
 }
 
 function hideLightbox() {

@@ -6,7 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { frameColour } from "./frame.mjs";
-import { categoryLabel, orderCategories, slugify, titleFromFilename } from "./names.mjs";
+import { categoryLabel, colourFromFilename, orderCategories, slugify, titleFromFilename, titleFromName } from "./names.mjs";
 
 const IMAGE_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"]);
 const LARGE_EDGE = 1600;
@@ -21,6 +21,16 @@ async function readCategoriesFile(file) {
 
 const visibleEntries = async (dir) =>
   (await readdir(dir, { withFileTypes: true })).filter((e) => !e.name.startsWith(".")).sort((a, b) => a.name.localeCompare(b.name));
+
+const isPhoto = (entry) => entry.isFile() && IMAGE_EXTS.has(path.extname(entry.name).toLowerCase());
+
+function uniqueId(used, name) {
+  const stem = slugify(name) || "photo";
+  let id = stem;
+  for (let n = 2; used.has(id); n++) id = `${stem}-${n}`;
+  used.add(id);
+  return id;
+}
 
 async function isFresh(source, outputs) {
   if (!outputs.every(existsSync)) return false;
@@ -89,17 +99,11 @@ export async function build({ src, out, categoriesFile }) {
     const files = new Set();
     const usedIds = new Set();
 
-    for (const entry of await visibleEntries(path.join(src, dirEntry.name))) {
-      const ext = path.extname(entry.name).toLowerCase();
-      if (!entry.isFile() || !IMAGE_EXTS.has(ext)) continue;
-      const stem = slugify(path.parse(entry.name).name) || "photo";
-      let id = stem;
-      for (let n = 2; usedIds.has(id); n++) id = `${stem}-${n}`;
-      usedIds.add(id);
-
-      const source = path.join(src, dirEntry.name, entry.name);
-      const largePath = path.join(imgDir, slug, `${id}-l.jpg`);
-      const thumbPath = path.join(imgDir, slug, `${id}-t.jpg`);
+    // Makes img/<slug>/<name>-l.jpg and -t.jpg from one original; null, with a warning, if it cannot be read.
+    const resized = async (relative, name) => {
+      const source = path.join(src, dirEntry.name, relative);
+      const largePath = path.join(imgDir, slug, `${name}-l.jpg`);
+      const thumbPath = path.join(imgDir, slug, `${name}-t.jpg`);
       try {
         if (await isFresh(source, [largePath, thumbPath])) {
           report.skipped++;
@@ -109,18 +113,35 @@ export async function build({ src, out, categoriesFile }) {
           report.processed++;
         }
         const { width, height } = await sharp(thumbPath).metadata();
-        files.add(`${id}-l.jpg`).add(`${id}-t.jpg`);
-        photos.push({
-          id,
-          title: titleFromFilename(entry.name),
-          thumb: `img/${slug}/${id}-t.jpg`,
-          large: `img/${slug}/${id}-l.jpg`,
-          w: width,
-          h: height,
-          frame: await frameFor(thumbPath),
-        });
+        files.add(`${name}-l.jpg`).add(`${name}-t.jpg`);
+        return { thumb: `img/${slug}/${name}-t.jpg`, large: `img/${slug}/${name}-l.jpg`, w: width, h: height, frame: await frameFor(thumbPath) };
       } catch (err) {
-        report.warnings.push(`${dirEntry.name}/${entry.name}: ${err.message}`);
+        report.warnings.push(`${dirEntry.name}/${relative}: ${err.message}`);
+        return null;
+      }
+    };
+
+    for (const entry of await visibleEntries(path.join(src, dirEntry.name))) {
+      if (entry.isDirectory()) {
+        // A folder is one design; each photo in it is the design in one colour, and the first is the one on the wall.
+        const id = uniqueId(usedIds, entry.name);
+        const variants = [];
+        const usedColours = new Set();
+        let first = null;
+        for (const file of await visibleEntries(path.join(src, dirEntry.name, entry.name))) {
+          if (!isPhoto(file)) continue;
+          const colourId = uniqueId(usedColours, path.parse(file.name).name);
+          // Slugs never hold "--", so this cannot clash with a single photo's files.
+          const image = await resized(path.join(entry.name, file.name), `${id}--${colourId}`);
+          if (!image) continue;
+          first ??= image;
+          variants.push({ id: colourId, colour: colourFromFilename(file.name), ...image });
+        }
+        if (first) photos.push({ id, title: titleFromName(entry.name), ...first, variants });
+      } else if (isPhoto(entry)) {
+        const id = uniqueId(usedIds, path.parse(entry.name).name);
+        const image = await resized(entry.name, id);
+        if (image) photos.push({ id, title: titleFromFilename(entry.name), ...image });
       }
     }
     if (photos.length) {

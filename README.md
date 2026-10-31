@@ -15,6 +15,20 @@ A phone-first photo gallery for the exhibition. Visitors scan a QR code, pick a 
 
 iPhone photos (HEIC) are converted automatically on a Mac. Anything the script cannot read is listed by name when it finishes, and the rest still builds.
 
+### One design in several colours
+
+Give the design a folder of its own inside the category, with one photo per colour:
+
+```
+originals/door-hangings/shubh-labh-hangings/maroon-and-green.jpg
+                                            orange-and-blue.jpg
+                                            red-and-gold.jpg
+```
+
+The wall then shows one frame for the design, with the other colours' frames peeking out behind it and a "3 colours" tag. Opening it shows round colour swatches under the photo; the arrows and swipes still move to the next design. The folder name becomes the title ("Shubh labh hangings") and each filename the colour ("maroon and green").
+
+The wall shows the first colour by filename. To pick a different one, put numbers in front: `1-red-and-gold.jpg`, `2-maroon-and-green.jpg`. The number only sets the order and is left out of the colour name.
+
 ### Category names and order
 
 Folder names become the category names ("tea-lights" shows as "Tea lights"), in alphabetical order. To change either, edit `categories.json`:
