@@ -72,8 +72,6 @@ function wall(items) {
     if (colours > 1) {
       // The other colours' frames peek out behind this one, with a tag saying how many there are.
       piece.dataset.stack = String(Math.min(colours, 3));
-      // Hang it in the design's shape, which the first colour's photo may not share.
-      img.style.aspectRatio = `${photo.w} / ${photo.h}`;
       photo.variants.slice(1, 3).forEach((v, n) => piece.style.setProperty(`--frame-${n + 2}`, v.frame));
       const tag = el("span", { className: "colours" }, `${colours} colours`);
       tag.setAttribute("aria-hidden", "true");
@@ -187,7 +185,7 @@ function showPhoto(slug, id) {
   // Room under the photo for the swatches; a narrow frame fits about 9 to a row.
   frame.style.setProperty("--swatch-rows", String(Math.ceil(variants.length / 9)));
   lightbox.title.textContent = photo.title;
-  // One frame for the whole design, so switching colours never resizes it; other shapes are cropped to fit.
+  // One frame for the whole design, so switching colours never resizes it; other shapes fit inside it whole.
   lightbox.img.style.setProperty("--ratio", String(photo.w / photo.h));
   lightbox.swatches.replaceChildren(...(variants.length > 1 ? variants.map(swatch) : []));
   showVariant(variants[0] ?? photo);

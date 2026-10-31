@@ -85,7 +85,7 @@ a { color: inherit; }
 }
 @media (min-width: 760px) { .piece { margin-bottom: 26px; } }
 .piece.in { opacity: 1; animation: settle 0.7s var(--ease) backwards; animation-delay: calc(var(--d, 0) * 70ms); }
-.piece img { display: block; width: 100%; height: auto; object-fit: cover; }
+.piece img { display: block; width: 100%; height: auto; }
 /* a design in several colours: the next colours' frames peek out behind it, like a small stack */
 .piece[data-stack="2"] { box-shadow: 6px -6px 0 -1px var(--frame-2), 6px -6px 0 0 rgb(0 0 0 / 0.16), var(--shadow-hung); }
 .piece[data-stack="3"] {
@@ -137,7 +137,8 @@ html.lb-open { overflow: hidden; }
 }
 .lightbox figure > img {
   display: block; width: min(var(--maxw), calc(var(--maxh) * var(--ratio, 1))); height: auto;
-  aspect-ratio: var(--ratio, 1); object-fit: cover; background: var(--wall);
+  /* A colour shot in the other shape sits whole on the mat rather than being cropped. */
+  aspect-ratio: var(--ratio, 1); object-fit: contain;
 }
 .lightbox figcaption { margin-top: 12px; font: italic 400 22px/1.2 var(--font-title); text-align: center; color: var(--ink); }
 /* The photo alone sets the mat's width: the caption and swatches wrap inside it instead of stretching it. */

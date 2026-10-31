@@ -26,7 +26,7 @@ const visibleEntries = async (dir) =>
 const isPhoto = (entry) => entry.isFile() && IMAGE_EXTS.has(path.extname(entry.name).toLowerCase());
 
 // A design keeps one shape while its colours change: the one most of its photos share, or the first
-// colour's on a tie. The site crops photos of another shape to it from the middle, where the piece is.
+// colour's on a tie. The viewer fits photos of another shape inside it whole, so fewest photos shrink.
 function commonShape(variants) {
   const counts = new Map();
   for (const v of variants) {
