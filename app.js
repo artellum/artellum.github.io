@@ -1,4 +1,4 @@
-import { interleave, neighbours, parseRoute, routeHref } from "./route.js";
+import { columns, interleave, neighbours, parseRoute, routeHref } from "./route.js";
 
 const app = document.getElementById("app");
 const SITE = "Artellum handcraft";
@@ -8,6 +8,7 @@ let prevView = null;
 let openedFromWall = false;
 let lightbox = null;
 let current = null;
+let layOutWall = null; // re-lays the wall on screen when its number of columns changes
 const itemsOf = (category) => category.photos.map((photo) => ({ slug: category.slug, photo }));
 const listFor = (view) => (view === "home" ? interleave(categories) : itemsOf(categories.find((c) => c.slug === view)));
 let under = "home"; // the view kept beneath an open photo: "home" or a category slug
@@ -60,12 +61,19 @@ function homeView() {
   ];
 }
 
+// Safari loses pieces inside CSS columns whenever they tilt, fade in or hold the colours tag,
+// so the wall lays out its own columns: two, three from 760px wide and four from 1180px.
+const WALL_WIDTHS = [matchMedia("(min-width: 760px)"), matchMedia("(min-width: 1180px)")];
+
 function wall(items) {
   const node = el("div", { className: "wall" });
-  items.forEach(({ slug, photo }, i) => {
+  // The wall shows a design's first colour, in that photo's own shape.
+  const shapes = items.map(({ photo }) => photo.variants?.[0] ?? photo);
+  const pieces = items.map(({ slug, photo }, i) => {
     const colours = photo.variants?.length ?? 1;
     const alt = colours > 1 ? `${photo.title}, in ${colours} colours` : photo.title;
-    const img = el("img", { src: photo.thumb, alt, width: photo.w, height: photo.h, loading: "lazy", decoding: "async" });
+    const { w, h } = shapes[i];
+    const img = el("img", { src: photo.thumb, alt, width: w, height: h, loading: "lazy", decoding: "async" });
     const piece = el("a", { className: "piece", href: routeHref({ view: "photo", slug, id: photo.id }) }, img);
     piece.style.setProperty("--d", String(i % 4));
     piece.style.setProperty("--frame", frameOf(photo, i));
@@ -80,8 +88,18 @@ function wall(items) {
     const reveal = () => piece.classList.add("in");
     img.addEventListener("load", reveal, { once: true });
     img.addEventListener("error", reveal, { once: true });
-    node.append(piece);
+    return piece;
   });
+  // Heights in column widths; the 0.15 is the frame and the gap below it.
+  const heights = shapes.map(({ w, h }) => h / w + 0.15);
+  let count = 0;
+  layOutWall = () => {
+    const n = 2 + WALL_WIDTHS.filter((width) => width.matches).length;
+    if (n === count) return;
+    count = n;
+    node.replaceChildren(...columns(heights, n).map((run) => el("div", { className: "wall-column" }, ...run.map((i) => pieces[i]))));
+  };
+  layOutWall();
   return node;
 }
 
@@ -281,6 +299,7 @@ async function start() {
   }
   render();
   addEventListener("hashchange", render);
+  WALL_WIDTHS.forEach((width) => width.addEventListener("change", () => layOutWall?.()));
 }
 
 start();

@@ -66,3 +66,23 @@ test("interleave takes one photo from each category in turn", () => {
 test("interleave of no categories is empty", () => {
   assert.deepEqual(interleave([]), []);
 });
+
+import { columns } from "../route.js";
+
+test("columns keep the pieces in order, top to bottom then left to right", () => {
+  assert.deepEqual(columns([1, 1, 1, 1, 1, 1, 1, 1], 4), [[0, 1], [2, 3], [4, 5], [6, 7]]);
+});
+
+test("columns fill from the left, leaving any short column at the end", () => {
+  assert.deepEqual(columns([1, 1, 1, 1, 1], 3), [[0, 1], [2, 3], [4]]);
+});
+
+test("columns come out about equally tall", () => {
+  assert.deepEqual(columns([3, 1, 1, 1], 2), [[0], [1, 2, 3]]);
+  assert.deepEqual(columns([1, 10, 1], 3), [[0], [1], [2]]);
+});
+
+test("columns are always as many as asked for, even with fewer pieces", () => {
+  assert.deepEqual(columns([1], 3), [[0], [], []]);
+  assert.deepEqual(columns([], 2), [[], []]);
+});

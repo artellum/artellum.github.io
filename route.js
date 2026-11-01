@@ -30,3 +30,31 @@ export function interleave(categories) {
   }
   return items;
 }
+
+// Splits a wall's pieces, in order, into n columns: indexes, top to bottom then left to right.
+// Like CSS columns, each column fills up to the lowest height that fits every piece in.
+export function columns(heights, n) {
+  const fill = (limit) => {
+    const runs = [[]];
+    let filled = 0;
+    heights.forEach((h, i) => {
+      if (runs.at(-1).length && filled + h > limit) {
+        runs.push([]);
+        filled = 0;
+      }
+      runs.at(-1).push(i);
+      filled += h;
+    });
+    return runs;
+  };
+  let low = 0;
+  let high = heights.reduce((sum, h) => sum + h, 0);
+  for (let step = 0; step < 50; step++) {
+    const mid = (low + high) / 2;
+    if (fill(mid).length <= n) high = mid;
+    else low = mid;
+  }
+  const runs = fill(high);
+  while (runs.length < n) runs.push([]);
+  return runs;
+}
