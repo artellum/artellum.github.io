@@ -63,10 +63,10 @@ Writes `qr/artellum-qr.png` (2400 × 3000, ready to print) and `qr/artellum-qr.s
 
 ## Publish on GitHub Pages
 
-Two copies of the site, each published from its repo's `main` branch (Settings -> Pages -> Deploy from a branch -> `main` / root):
+Two copies of the site:
 
-- **Test:** `pranjalagg/artellum-gallery` (the `origin` remote) at `https://pranjalagg.github.io/artellum-gallery/`. Every `git push` lands here.
-- **Live:** `artellum/artellum.github.io` (the `prod` remote) at `https://artellum.github.io/`, which the QR code opens. Only `npm run release` updates it.
+- **Test:** `pranjalagg/artellum-gallery` (the `origin` remote) at `https://pranjalagg.github.io/artellum-gallery/`, published by the "Test site" workflow (Settings -> Pages -> Source: GitHub Actions). Every push to `main` lands here. To look at another branch, such as `book-design`, push it, then open Actions -> "Test site" -> Run workflow and type the branch name. It stays up until the next push to `main`, or run the workflow again with `main`.
+- **Live:** `artellum/artellum.github.io` (the `prod` remote) at `https://artellum.github.io/`, which the QR code opens, published from its `main` branch (Settings -> Pages -> Deploy from a branch -> `main` / root). Only `npm run release` updates it.
 
 `npm run release` runs the tests, then copies exactly what is on the test site to the live one, so unpushed local changes never go live.
 
